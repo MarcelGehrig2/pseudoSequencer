@@ -1,4 +1,3 @@
 [Project]
-Name=pseudoSequencer
 Manager=KDevCMakeManager
-VersionControl=kdevgit
+Name=pseudoSequencer

@@ -1,0 +1,13 @@
+
+
+
+
+
+
+
+while(true) {
+	startButtonPressed();
+	sequenceRendezvous();
+
+
+}
