@@ -1,4 +1,5 @@
-#include "../sequencer/Sequence.hpp"
+#include "../../sequencer/Sequence.hpp"
+
 
 class sequenceRendevous : public Sequence {
 public:
@@ -10,10 +11,9 @@ public:
 	
 	sequenceBringToRendezvous bringToRendezvous(string name);
 	
-	
 
 	
 	
 private:	
 	
-}
+};

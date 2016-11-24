@@ -1,13 +1,16 @@
 #include "Sequence.hpp"
-
+#include <string>
+#include <list>
 
 
 class Sequencer {
 public:
 	Sequencer();
 	
-	addSequence(Sequence &sequence, std::string name);	//new sequence-object registered in sequences
+	void addSequence(Sequence &sequence, std::string name);	//new sequence-object registered in sequences
+	Sequence* getSequenceByID(int ID);
+	Sequence* getSeqenceByName(std::string name);
 	
 private:
-	list sequences;
+	std::list< Sequence* > sequences;
 };
