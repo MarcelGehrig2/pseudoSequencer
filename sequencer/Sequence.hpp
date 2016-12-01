@@ -10,9 +10,12 @@ class Sequence {
 public:
 	Sequence(Sequencer& S, int callerID, std::string name = "");
 	
+// 	virtual int operator()(std::string args) = 0;	//has to be implemented in derived class
+	int start();	//called bei operator() by derived class
+	
 	int runBlocking();
 	int runNonBlocking();
-	int run();				//uses standard value "isBlocking"	
+	int run();				//uses standard value "isBlocking"
 	bool checkPreconditions();
 	bool checkPostconditions();
 	bool checkExceptionMonitors();

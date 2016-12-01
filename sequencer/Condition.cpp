@@ -1,9 +1,15 @@
+#include "Condition.hpp"
 
-#include condition.hpp
 
+// bool getConditionState() {
+// 	checkCondition();
+// 	return conditionState;
+// };
 
-bool getConditionState() {
-	checkCondition();
+bool Condition::check()
+{
+	validate();
 	return conditionState;
 }
+
 

@@ -1,18 +1,17 @@
 
 
-class Condition {
-	
+class Condition {	
 public:
 	Condition();
 	
 	
-	bool getConditionState();
+	bool check();
 	
-	void checkCondition() = 0;		// has to be overwritten (pure virtual function)
+	void validate() = 0;		// has to be overwritten (pure virtual function)
 	
 	
 protected:
 	bool conditionState = false;
-	bool inheritable = false;
+	bool heritable = false;
 	
-}
+};

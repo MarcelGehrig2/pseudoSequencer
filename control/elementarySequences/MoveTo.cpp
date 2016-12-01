@@ -8,7 +8,16 @@ MoveTo::MoveTo(Sequencer &S, int callerID, std::string name = "") : Sequence(S, 
 int MoveTo::operator()(int posX, int posY)
 {
 	nextWaypoint << posX, posY;		//TODO check syntax
-	Sequence.run();
+	
+	
+	
+	// always copy the code part below
+	// ///////////////////////////////
+	
+	Sequence::setIsBlocking();
+// 	Sequence::setIsNonBlocking();
+	
+	return Sequence::start();		//Has to be implemented by the control developer !!
 }
 
 
