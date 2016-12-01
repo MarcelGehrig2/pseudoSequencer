@@ -8,7 +8,7 @@ class Sequence {
 // 	friend class eeros::sequencer::Sequencer;
 	
 public:
-	Sequence(Sequencer &S, int callerID, std::string name = "");
+	Sequence(Sequencer& S, int callerID, std::string name = "");
 	
 	int runBlocking();
 	int runNonBlocking();
@@ -17,7 +17,7 @@ public:
 	bool checkPostconditions();
 	bool checkExceptionMonitors();
 	
-	virtual bool action();		//TODO
+	virtual bool action() = 0;		//pure virtual function
 	
 	virtual void set(std::string instruction, type value);	//TODO ??? polymorph or string
 	
@@ -52,7 +52,7 @@ public:
 // 	
 	eeros::logger::Logger<eeros::logger::LogWriter> log;
 protected:
-	Sequencer &S;			//reference to singleton Sequencer
+	Sequencer &s;			//reference to singleton Sequencer
 	
 	std::string name;
 	int sequenceID = 0;
@@ -63,7 +63,7 @@ protected:
 	std::string state;				//TODO use enum
 	bool isBlocking = true;			//standard run mode
 	std::vector<int> callerStack;	//vector with callerIDs. Top element is latest caller
-	std::vector<int> blockingCallerStack;	//TODO vector with callerIDs since last non blocking call. Botten element is the oldest blocked caller in this row.
+	std::vector<int> callerStackBlocking;	//TODO vector with callerIDs since last non blocking call. Botten element is the oldest blocked caller in this row.
 	
 	
 	

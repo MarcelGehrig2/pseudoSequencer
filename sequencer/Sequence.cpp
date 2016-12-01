@@ -1,23 +1,26 @@
 #include "Sequence.hpp"
 #include "Sequencer.hpp"
 #include <thread>
+// #include <chrono>
 
-Sequence::Sequence(Sequencer &S, int callerID, std::string name="") :
-S(S), name(name), startTime(std::chrono::steady_clock::now()) { 
-	sequenceID = sequenceCount++;
-	
+Sequence::Sequence(Sequencer& seq, int callerID, std::string name="") :
+s(seq), name(name), startTime(std::chrono::steady_clock::now()) 
+{ 
+	sequenceID = sequenceCount++;	//TODO check how many Sequence-Objects of this type are allowed. Maybe singleton.
 	if (name == "") {
 		setName("sequence " + sequenceID);		//TODO syntax
 	}
 	
 	setState("idle");
 	
-	S.addSequence(getName());	//register this new Sequence-Object in Sequencer
+	s.addSequence(getName());	//register this new Sequence-Object in Sequencer
 	
 	//get and update callerStack
-	Sequence* callerSequence = S.getSequenceByID(callerID);
+	Sequence* callerSequence = s.getSequenceByID(callerID);
 	callerStack = callerSequence.getCallerStack();
 	callerStack.push_back(callerSequence.getID());	//add latest caller
+	//get and update callerStackBlocking
+	//TODO
 	
 
 }

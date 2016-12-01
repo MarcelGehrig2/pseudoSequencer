@@ -1,4 +1,4 @@
-#include "../sequencer/Sequence.hpp"
+#include "../../sequencer/Sequence.hpp"
 
 class SequencePickUp : public Sequence {
 public:
