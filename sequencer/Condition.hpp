@@ -1,16 +1,19 @@
-
+#include "Sequencer.hpp"
 
 class Condition {	
 public:
-	Condition();
+	Condition(Sequencer& seq);
 	
+	bool operator()();
 	
-	bool check();
+	virtual bool check();
 	
-	void validate() = 0;		// has to be overwritten (pure virtual function)
+	virtual void validate() = 0;		// has to be overwritten (pure virtual function)
 	
 	
 protected:
+	Sequencer &S;			//reference to singleton Sequencer
+	
 	bool conditionState = false;
 	bool heritable = false;
 	

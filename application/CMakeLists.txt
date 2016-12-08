@@ -2,3 +2,4 @@
 add_subdirectory(monitors)
 add_subdirectory(sequences)
 add_subdirectory(elementarySequences)
+add_subdirectory(conditions)

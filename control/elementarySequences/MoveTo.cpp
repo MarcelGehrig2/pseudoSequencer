@@ -1,6 +1,7 @@
 #include "MoveTo.hpp"
 
-MoveTo::MoveTo(Sequencer &S, int callerID, std::string name = "") : Sequence(S, callerID, name) {
+MoveTo::MoveTo(Sequencer &S, int callerID, std::string name = "") : Sequence(S, callerID, name)
+{
 	
 }
 
@@ -22,12 +23,12 @@ int MoveTo::operator()(int posX, int posY)
 
 
 bool MoveTo::action() {
-	auto cs = s.getCS();
+	auto cs = S.getCS();
 	cs.nextWaypointBlock.setValue(nextWaypoint);		//Sequencer block (similar to constant)
 }
 
 bool MoveTo::stopCondition()
 {
-	auto cs = s.getCS();
+	auto cs = S.getCS();
 	return cs.waypointReached();		//Sequencer block (similar to constant)
 }

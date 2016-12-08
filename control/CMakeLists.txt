@@ -1,3 +1,4 @@
 
 add_subdirectory(sequences)
 add_subdirectory(elementarySequences)
+add_subdirectory(conditions)

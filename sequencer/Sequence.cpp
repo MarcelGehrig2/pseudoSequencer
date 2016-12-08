@@ -4,7 +4,7 @@
 #include <chrono>
 
 Sequence::Sequence(Sequencer& seq, int callerID, std::string name="") :
-s(seq), startTime(std::chrono::steady_clock::now()) 
+S(seq), startTime(std::chrono::steady_clock::now()) 
 { 
 	sequenceID = sequenceCount++;	//TODO check how many Sequence-Objects of this type are allowed. Maybe singleton.
 	if (name == "") {
@@ -16,10 +16,10 @@ s(seq), startTime(std::chrono::steady_clock::now())
 	
 	setState("idle");
 	
-	s.addSequence(getName());	//register this new Sequence-Object in Sequencer
+	S.addSequence(getName());	//register this new Sequence-Object in Sequencer
 	
 	//get and update callerStack
-	Sequence* callerSequence = s.getSequenceByID(callerID);
+	Sequence* callerSequence = S.getSequenceByID(callerID);
 	callerStack = callerSequence.getCallerStack();
 	callerStack.push_back(callerSequence.getID());	//add latest caller
 	//get and update callerStackBlocking
