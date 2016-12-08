@@ -21,12 +21,13 @@ int MoveTo::operator()(int posX, int posY)
 }
 
 
-MoveTo::action() {
+bool MoveTo::action() {
 	auto cs = s.getCS();
 	cs.nextWaypointBlock.setValue(nextWaypoint);		//Sequencer block (similar to constant)
 }
 
-void MoveTo::setStopCondition()
+bool MoveTo::stopCondition()
 {
-	//TODO
+	auto cs = s.getCS();
+	return cs.waypointReached();		//Sequencer block (similar to constant)
 }

@@ -8,7 +8,9 @@ public:
 	
 	int operator()(int posX, int posY);	//interface to caller
 	
-	void setStopCondition();
+	bool action();
+	
+	bool stopCondition();
 	
 	
 	

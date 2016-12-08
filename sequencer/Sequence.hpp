@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <functional>
 
 class Sequence {
 	
@@ -19,10 +20,12 @@ public:
 	bool checkPreconditions();
 	bool checkPostconditions();
 	bool checkExceptionMonitors();
+// 	void addStopCondition(std::function<bool ()> f);
+	virtual bool stopCondition();
 	
 	virtual bool action() = 0;		//pure virtual function
 	
-	virtual void set(std::string instruction, type value);	//TODO ??? polymorph or string
+// 	virtual void set(std::string instruction, type value);	//TODO ??? polymorph or string
 	
 	void addMonitor(Monitor monitor); //TODO Exception Monitor
 	
@@ -36,7 +39,7 @@ public:
 	void setState(std::string state);
 	
 	//Timeout
-	void setTimeout(double timeout);		//in seconds. For this sequence
+	void setTimeout(double timeoutInSec);		//in seconds. For this sequence
 	bool checkTimeout();
 	bool checkTimeout(int sequenceID);
 	bool checkTimeout(Sequence* sequence);
@@ -67,7 +70,6 @@ protected:
 	bool isBlocking = true;			//standard run mode
 	std::vector<int> callerStack;	//vector with callerIDs. Top element is latest caller
 	std::vector<int> callerStackBlocking;	//TODO vector with callerIDs since last non blocking call. Botten element is the oldest blocked caller in this row.
-	
 	
 	
 	static int sequenceCount = 0;	//TODO works like intended? every object created from an inherited class increments cont

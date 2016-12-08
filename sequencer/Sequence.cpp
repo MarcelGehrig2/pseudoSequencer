@@ -1,14 +1,17 @@
 #include "Sequence.hpp"
 #include "Sequencer.hpp"
 #include <thread>
-// #include <chrono>
+#include <chrono>
 
 Sequence::Sequence(Sequencer& seq, int callerID, std::string name="") :
-s(seq), name(name), startTime(std::chrono::steady_clock::now()) 
+s(seq), startTime(std::chrono::steady_clock::now()) 
 { 
 	sequenceID = sequenceCount++;	//TODO check how many Sequence-Objects of this type are allowed. Maybe singleton.
 	if (name == "") {
 		setName("sequence " + sequenceID);		//TODO syntax
+	} else {
+		//TODO what is, if name already exists?
+		setName(name);
 	}
 	
 	setState("idle");
@@ -49,7 +52,7 @@ int Sequence::runBlocking()
 	// /////////////////////
 	while(bool stop = false) {
 		stop = stop | checkTimeoutOfAllCallers();
-		stop = stop | checkPostconditions();		//TODO beter checkExitCondition() ??
+		stop = stop | stopCondition();		//TODO beter checkExitCondition() ??
 		stop = stop | checkExceptionMonitors();	//of all callers
 	// 	checkPause();			//TODO or us a global Condition instead?
 	// 	checkStop();			//TODO a condition as well?
@@ -62,6 +65,7 @@ int Sequence::runBlocking()
 int Sequence::runNonBlocking()
 {
 	setIsNonBlocking();
+	
 }
 
 int Sequence::run()
@@ -74,6 +78,12 @@ int Sequence::run()
 	}
 }
 
+int Sequence::start()
+{
+	run();
+}
+
+
 bool Sequence::checkPreconditions()
 {
 
@@ -83,7 +93,10 @@ bool Sequence::checkPreconditions()
 
 
 
-
+bool Sequence::stopCondition()
+{
+	return true;	// Sequence is immediately stopped after action is performed.
+}
 
 void Sequence::setIsBlocking()
 {

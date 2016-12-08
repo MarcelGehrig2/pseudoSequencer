@@ -1,4 +1,5 @@
 #include "../../sequencer/Sequence.hpp"
+#include "../../control/elementarySequences/MoveTo.hpp"
 
 class SequencePickUp : public Sequence {
 public:
@@ -6,15 +7,14 @@ public:
 	
 
 	
-	SequenceBringToRendezvous bringToRendezvous(string name);
-	
+	MoveTo moveTo;
 	
 
 	
 	
 private:	
 	
-}
+};
 
 
 
