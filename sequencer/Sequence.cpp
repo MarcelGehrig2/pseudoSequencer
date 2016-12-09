@@ -20,7 +20,7 @@ S(seq), startTime(std::chrono::steady_clock::now())
 	
 	
 	//get and update callerStack
-	Sequence* callerSequence = S.getSequenceByID(callerID);
+	callerSequence = S.getSequenceByID(callerID);
 	callerStack = callerSequence.getCallerStack();
 	callerStack.push_back(callerSequence.getID());	//add latest caller
 	//get and update callerStackBlocking
@@ -36,31 +36,32 @@ int Sequence::runBlocking()
 	// 1 Check precondition
 	// ////////////////////
 	checkPreconditions();	//Only preconditions of this seqeuences are checked
+							//TODO blocking or jump over
 	
 	
+	if(runningState == "running") {		//checkPreconditions did not change the runningState
 	
-	
-	// 2 Action
-	// ////////
-	action();		//Send action to Controlsystem and or Safetysystem.
-					//Send signal to other sequence
-					//Star a Sequence
-	
-	
-	
-	
-	// 3 Check postcondition
-	// /////////////////////
-	while(bool stop = false) {
-		stop = stop | checkTimeoutOfAllCallers();
-		stop = stop | stopCondition();		//TODO 
-		stop = stop | checkExitCondition();	//used for normal stop of this step/sequence 
-		stop = stop | checkExceptionMonitors();	//of all callers
-	// 	checkPause();			//TODO or us a global Condition instead?
-	// 	checkStop();			//TODO a condition as well?
-		std::this_thread::sleep_for (std::chrono::milliseconds(pollingTime));
+		// 2 Action
+		// ////////
+		action();		//Send action to Controlsystem and or Safetysystem.
+						//Send signal to other sequence
+						//Star a Sequence
+		
+		
+		
+		
+		// 3 Check postcondition
+		// /////////////////////
+		while(bool stop = false) {
+			stop = stop | stopCondition();		//TODO  
+			stop = stop | checkTimeoutOfAllCallers();
+			stop = stop | checkExitCondition();	//used for normal stop of this step/sequence 
+			stop = stop | checkExceptionMonitors();	//of all callers
+		// 	checkPause();			//TODO or us a global Condition instead?
+		// 	checkStop();			//TODO a condition as well?
+			std::this_thread::sleep_for (std::chrono::milliseconds(pollingTime));
+		}
 	}
-	
 
 }
 
@@ -72,12 +73,25 @@ int Sequence::runNonBlocking()
 
 int Sequence::run()
 {
-	if (getIsBlocking()) {
-		runBlocking();
+	runCounter++;
+	
+	if ( callerSequence->runningState == "running" ) {
+		repetitionCounter=0;
+		
+		while ( ( nrOfSequenceRepetitions==0 ) || (repetitionCounter < nrOfSequenceRepetitions) ) {
+			repetitionCounter ++;
+			
+			if (getIsBlocking()) { runBlocking(); }
+			else { runNonBlocking(); }
+			
+			if ( runningState == "restarting" ) {
+				if (nrOfSequenceRepetitions != 0 ) nrOfSequenceRepetitions++;
+				runningState = "running";
+			}
+			if ( runningState == "stopping" )	break;
+		}
 	}
-	else {
-		runNonBlocking();
-	}
+	runningState = "terminated";	//TODO terminated with warning/error	
 }
 
 int Sequence::start()
@@ -112,7 +126,7 @@ void Sequence::setIsNonBlocking()
 
 bool Sequence::getIsBlocking() const
 {
-
+	return isBlocking;
 }
 	
 std::string Sequence::getName() const {
@@ -135,6 +149,12 @@ std::vector< int > Sequence::getCallerStack()
 {
 
 }
+
+void Sequence::restartSequence()
+{
+	state="restarting";
+}
+
 
 
 //Timeout handling

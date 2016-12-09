@@ -2,6 +2,9 @@
 
 int Gripper::operator()(int gripperID, std::__cxx11::string action)
 {
+	this->gripperID = gripperID;
+	this->action = action;
+	
 	// always copy the code part below
 	// ///////////////////////////////
 	

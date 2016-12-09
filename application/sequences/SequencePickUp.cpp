@@ -36,7 +36,9 @@ SequencePickUp::action()
 	
 	gripper(1, "close");
 	
-	if (condMovementBlocked()) {
+	if ( S.getCS().packageAvailable()==false ) {
+		this->runningState="restarting";
+	}
 	//TODO check packet available = Condition???
 	//	No 	-> restart sequence	TODO restart 
 	//	Yes -> continue

@@ -18,6 +18,8 @@ public:
 	int runBlocking();
 	int runNonBlocking();
 	int run();				//uses standard value "isBlocking"
+	void restartSequence();
+	
 	bool checkPreconditions();
 	bool checkPostconditions();
 	bool checkExceptionMonitors();
@@ -39,6 +41,8 @@ public:
 	
 	std::string getState() const;
 	void setState(std::string state);
+	
+	void restartSequence();
 	
 	//Timeout
 	void setTimeout(double timeoutInSec);		//in seconds. For this sequence
@@ -69,17 +73,24 @@ protected:
 	auto startTime;
 	double timeout = 0;				//0 = not set or infinite
 	int pollingTime = 10;			//in milliseconds for checkPostconditions (including timeout and stuff)
+	int nrOfSequenceRepetitions = 0;	//number of repetitions of this sequence; 0==infinite; 1==run only once; 2==run once and repete once
+											//sequence restarts are not counted
+	int repetitionCounter = 0;		//how many times the sequence got repeted within a single run
+	int runCounter = 0;	
 	
 	std::string state;				//TODO use enum,	userdefined
-	std::string RunningState;		//TODO use enum: idle (created but not yet started), running, paused, stopping, terminated, terminatedWithWarning, terminatedWithError
+	std::string runningState;		//TODO use enum: idle (created but not yet started), running, paused, stopping, terminated, terminatedWithWarning, terminatedWithError, restarting
 	
 	bool isBlocking = true;			//standard run mode
 	std::vector<int> callerStack;	//vector with callerIDs. Top element is latest caller	(TODO use pointer to sequence instead?)
 	std::vector<int> callerStackBlocking;	//TODO vector with callerIDs since last non blocking call. Bottom element is the oldest blocked caller in this row.
+	Sequence* callerSequence;
 	
 	std::vector< Condition* > preconditions;
 	std::vector< Condition* > postconditions;
 	
 	static int sequenceCount = 0;	//TODO works like intended? every object created from an inherited class increments cont
+	
+	
 };
 		
