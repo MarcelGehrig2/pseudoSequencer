@@ -1,5 +1,5 @@
 #include "Sequence.hpp"
-#include "Sequencer.hpp"
+// #include "Sequencer.hpp"
 #include <thread>
 #include <chrono>
 
@@ -16,7 +16,8 @@ S(seq), startTime(std::chrono::steady_clock::now())
 	
 	setState("idle");
 	
-	S.addSequence(getName());	//register this new Sequence-Object in Sequencer
+	S.addSequence(this);	//register this new Sequence-Object in Sequencer
+	
 	
 	//get and update callerStack
 	Sequence* callerSequence = S.getSequenceByID(callerID);
@@ -52,7 +53,8 @@ int Sequence::runBlocking()
 	// /////////////////////
 	while(bool stop = false) {
 		stop = stop | checkTimeoutOfAllCallers();
-		stop = stop | stopCondition();		//TODO beter checkExitCondition() ??
+		stop = stop | stopCondition();		//TODO 
+		stop = stop | checkExitCondition();	//used for normal stop of this step/sequence 
 		stop = stop | checkExceptionMonitors();	//of all callers
 	// 	checkPause();			//TODO or us a global Condition instead?
 	// 	checkStop();			//TODO a condition as well?

@@ -9,12 +9,12 @@ public:
 	
 
 	//Sequences
-	MoveTo moveTo;
-	Gripper gripper;
+	MoveTo* moveTo;
+	Gripper* gripper;
 	
 	
 	//Conditions
-	CondMovementBlocked condMovementBlocked;
+	CondMovementBlocked* condMovementBlocked;
 
 	
 	

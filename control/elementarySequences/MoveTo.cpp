@@ -27,7 +27,7 @@ bool MoveTo::action() {
 	cs.nextWaypointBlock.setValue(nextWaypoint);		//Sequencer block (similar to constant)
 }
 
-bool MoveTo::stopCondition()
+bool MoveTo::checkExitCondition()
 {
 	auto cs = S.getCS();
 	return cs.waypointReached();		//Sequencer block (similar to constant)

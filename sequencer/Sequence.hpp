@@ -1,4 +1,5 @@
 #include "Sequencer.hpp"
+#include "Condition.hpp"
 #include <string>
 #include <vector>
 #include <chrono>
@@ -22,6 +23,7 @@ public:
 	bool checkExceptionMonitors();
 // 	void addStopCondition(std::function<bool ()> f);
 	virtual bool stopCondition();
+	virtual bool checkExitCondition() = 0;
 	
 	virtual bool action() = 0;		//pure virtual function
 	
@@ -72,9 +74,11 @@ protected:
 	std::string RunningState;		//TODO use enum: idle (created but not yet started), running, paused, stopping, terminated, terminatedWithWarning, terminatedWithError
 	
 	bool isBlocking = true;			//standard run mode
-	std::vector<int> callerStack;	//vector with callerIDs. Top element is latest caller
+	std::vector<int> callerStack;	//vector with callerIDs. Top element is latest caller	(TODO use pointer to sequence instead?)
 	std::vector<int> callerStackBlocking;	//TODO vector with callerIDs since last non blocking call. Bottom element is the oldest blocked caller in this row.
 	
+	std::vector< Condition* > preconditions;
+	std::vector< Condition* > postconditions;
 	
 	static int sequenceCount = 0;	//TODO works like intended? every object created from an inherited class increments cont
 };

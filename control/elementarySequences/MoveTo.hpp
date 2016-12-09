@@ -10,7 +10,7 @@ public:
 	
 	bool action();
 	
-	bool stopCondition();
+	bool checkExitCondition();
 	
 	
 	

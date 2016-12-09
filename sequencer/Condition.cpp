@@ -1,8 +1,9 @@
 #include "Condition.hpp"
+#include "Sequencer.hpp"
 
 Condition::Condition(Sequencer& seq) : S(seq)
 {
-
+	S.addCondition(this);
 }
 
 
@@ -20,6 +21,7 @@ bool Condition::operator()()
 bool Condition::check()
 {
 	validate();
+	
 	return conditionState;
 }
 

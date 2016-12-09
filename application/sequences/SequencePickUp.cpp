@@ -36,6 +36,7 @@ SequencePickUp::action()
 	
 	gripper(1, "close");
 	
+	if (condMovementBlocked()) {
 	//TODO check packet available = Condition???
 	//	No 	-> restart sequence	TODO restart 
 	//	Yes -> continue
