@@ -1,5 +1,6 @@
 #include "Sequencer.hpp"
 #include "Condition.hpp"
+#include "SequencerException.hpp"
 #include <string>
 #include <vector>
 #include <chrono>
@@ -46,10 +47,12 @@ public:
 	
 	//Timeout
 	void setTimeout(double timeoutInSec);		//in seconds. For this sequence
-	bool checkTimeout();
+// 	bool checkTimeout();
 	bool checkTimeout(int sequenceID);
 	bool checkTimeout(Sequence* sequence);
-	bool checkTimeoutOfAllCallers();		//including "this" sequence, goes up to (but without) latest caller of a non blocking sequence
+	bool checkTimeoutOfAllCallers();		//excluding "this" sequence, goes up to (but without) latest caller of a non blocking sequence
+	bool checkTimeoutOfThisSequence();
+	virtual timeoutAction();				//action when timout occours: standard throw error
 	
 	// run mode
 	void setIsBlocking();		//standard run mode
@@ -77,9 +80,12 @@ protected:
 											//sequence restarts are not counted
 	int repetitionCounter = 0;		//how many times the sequence got repeted within a single run
 	int runCounter = 0;	
+	int timeoutsInARowCounter = 0;	//TODO when to reset??
 	
 	std::string state;				//TODO use enum,	userdefined
 	std::string runningState;		//TODO use enum: idle (created but not yet started), running, paused, stopping, terminated, terminatedWithWarning, terminatedWithError, restarting
+	
+	
 	
 	bool isBlocking = true;			//standard run mode
 	std::vector<int> callerStack;	//vector with callerIDs. Top element is latest caller	(TODO use pointer to sequence instead?)

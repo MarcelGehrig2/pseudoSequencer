@@ -1,4 +1,6 @@
 #include "Sequence.hpp"
+#include "Sequencer.hpp"
+#include "SequencerException.hpp"
 // #include "Sequencer.hpp"
 #include <thread>
 #include <chrono>
@@ -35,11 +37,11 @@ int Sequence::runBlocking()
 	
 	// 1 Check precondition
 	// ////////////////////
-	checkPreconditions();	//Only preconditions of this seqeuences are checked
+	bool preconditionsPass = checkPreconditions();	//Only preconditions of this seqeuences are checked
 							//TODO blocking or jump over
 	
 	
-	if(runningState == "running") {		//checkPreconditions did not change the runningState
+	if( (runningState == "running") && preconditionsPass ) {		//checkPreconditions did not change the runningState
 	
 		// 2 Action
 		// ////////
@@ -53,9 +55,11 @@ int Sequence::runBlocking()
 		// 3 Check postcondition
 		// /////////////////////
 		while(bool stop = false) {
-			stop = stop | stopCondition();		//TODO  
-			stop = stop | checkTimeoutOfAllCallers();
 			stop = stop | checkExitCondition();	//used for normal stop of this step/sequence 
+			
+			stop = stop | checkTimeoutOfAllCallers();	//if caller timeout -> error thrown
+			stop = stop | checkTimeoutOfThisSequence(); //if true -> timeoutAction()
+			
 			stop = stop | checkExceptionMonitors();	//of all callers
 		// 	checkPause();			//TODO or us a global Condition instead?
 		// 	checkStop();			//TODO a condition as well?
@@ -102,7 +106,9 @@ int Sequence::start()
 
 bool Sequence::checkPreconditions()
 {
-
+	bool pass;
+	pass = !( S.sequencerException.error );		//Subsequence does not start, if an error is activ. Like a timeout of a caller sequence.
+	return pass;
 }
 
 
@@ -147,7 +153,7 @@ Sequence::setState(std::string state) : state(state) {
 
 std::vector< int > Sequence::getCallerStack()
 {
-
+	return callerStack;
 }
 
 void Sequence::restartSequence()
@@ -158,9 +164,17 @@ void Sequence::restartSequence()
 
 
 //Timeout handling
-bool Sequence::checkTimeout()
+bool Sequence::checkTimeoutOfThisSequence()
 {
-	return checkTimeout(getID());
+	//TODO this sequences timout, detected by a sub sequence. now clear exception and do timeout action. 
+	//clear error, if it is caused by a called seqeuence, beacause of the timeout of this seqeuence
+	if ( S.getSeqencerException()->isSet() ) {
+		if ( ( S.getSeqencerException()->getRootSequence() == this ) && ( S.getSeqencerException()->getExceptionDescription() == "timeout" ) ) {
+			S.getSeqencerException()->clearException();
+		}
+	}
+	
+// 	return checkTimeout(this);	//TODO
 }
 
 bool Sequence::checkTimeout(int sequenceID)
@@ -201,4 +215,8 @@ bool Sequence::checkTimeoutOfAllCallers()	//does not check timeout of "this"
 	return isTimeout;		//if true, at least on1 timeout occoured
 }
 
+bool Sequence::timeoutAction()
+{
+	S.sequencerError.throwError();
+}
 

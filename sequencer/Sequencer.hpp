@@ -1,5 +1,6 @@
 #include "Sequence.hpp"
 #include "Condition.hpp"
+#include "SequencerError.hpp"
 #include <string>
 #include <list>
 
@@ -16,10 +17,13 @@ public:
 	
 	void addCondition(Condition* condition);
 	
+	SequencerError* getSeqencerException();
+	
 	auto& getCS();
 	auto& getSS();
 	
 private:
+	SequencerError sequencerException;
 	std::list< Sequence* > sequences;
 	std::list< Condition* > conditions;
 	auto& cs;

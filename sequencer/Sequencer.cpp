@@ -23,4 +23,8 @@ auto& Sequencer::getSS()
 	return ss;
 }
 
+SequencerError* Sequencer::getSeqencerException()
+{
+	return sequencerException;
+}
 
