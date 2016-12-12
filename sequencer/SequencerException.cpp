@@ -1,14 +1,14 @@
 #include "SequencerException.hpp"
 
 
-void SequencerError::throwError(Sequence* caller)
+void SequencerError::throwException(Sequence* caller)
 {
 	std::string errorDescription;
 	errorDescription = "Error from: " + caller->getName();
 	throwError(caller, errorDescription);
 }
 
-void SequencerError::throwError(Sequence* caller, std::__cxx11::string errorDescription)
+void SequencerError::throwException(Sequence* caller, std::__cxx11::string errorDescription)
 {
 	error = true;
 	
@@ -24,7 +24,7 @@ void SequencerError::throwError(Sequence* caller, std::__cxx11::string errorDesc
 }
 
 
-void SequencerError::clearError()
+void SequencerError::clearException()
 {
 	error = false;
 }
@@ -39,7 +39,7 @@ Sequence* SequencerError::getRootSequence()
 	return rootSequence;
 }
 
-std::__cxx11::string SequencerError::getErrorDescription()
+std::__cxx11::string SequencerError::getExceptionDescription()
 {
 	return errorDescription;
 }

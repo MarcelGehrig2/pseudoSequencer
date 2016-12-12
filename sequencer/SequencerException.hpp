@@ -11,7 +11,7 @@ public:
 	void clearException();
 	bool isSet();
 	Sequence* getRootSequence();
-	std::string getErrorDescription();
+	std::string getExceptionDescription();
 	
 protected:
 	bool error = false;

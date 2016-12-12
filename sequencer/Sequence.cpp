@@ -198,7 +198,7 @@ bool Sequence::checkTimeout(Sequence* sequence)
 	
 bool Sequence::checkTimeoutOfAllCallers()	//does not check timeout of "this"
 {
-	//TODO what should happen if a callerTimeout happens
+	//TODO if callerTimeout happens, throw sequencer exception. the caller sequence handles than the timeout action.
 	//TODO non blocking seqeuences should not inherit timeouts --> outer iterator
 	//TODO how do the list iterator exactly work?
 	//lates (newest) caller of a non blocking call. Timeouts of this caller and older callers are ignored
