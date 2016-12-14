@@ -37,20 +37,25 @@ public:
 	std::string getName() const;
 	void setName(std::string name);
 	int getID() const;
+	Sequence* getCallerSequence();
 	std::vector<int> getCallerStack();
+	
 	
 	
 	std::string getState() const;
 	void setState(std::string state);
+	runningStateEnum getRunningState() const;
+	void setRunningState(runningStateEnum runningState);
 	
 	void restartSequence();
+	void pauseSequence();
 	
 	//Timeout
 	void setTimeout(double timeoutInSec);		//in seconds. For this sequence
 // 	bool checkTimeout();
 	bool checkTimeout(int sequenceID);
 	bool checkTimeout(Sequence* sequence);
-	bool checkTimeoutOfAllCallers();		//excluding "this" sequence, goes up to (but without) latest caller of a non blocking sequence
+	bool checkTimeoutOfAllBlockedCallers();		//excluding "this" sequence, goes up to (but without) latest caller of a non blocking sequence
 	bool checkTimeoutOfThisSequence();
 	virtual timeoutAction();				//action when timout occours: standard throw error
 	
@@ -66,6 +71,17 @@ public:
 // 	virtual void exit();
 // 	
 	eeros::logger::Logger<eeros::logger::LogWriter> log;
+	
+	enum runningStateEnum {
+		idle,
+		running,
+		paused,
+		aborting,
+		aborted,
+		stopped,
+		restartingStep,
+		restarting
+	};
 	
 	
 protected:
@@ -83,7 +99,7 @@ protected:
 	int timeoutsInARowCounter = 0;	//TODO when to reset??
 	
 	std::string state;				//TODO use enum,	userdefined
-	std::string runningState;		//TODO use enum: idle (created but not yet started), running, paused, stopping, terminated, terminatedWithWarning, terminatedWithError, restarting
+	runningStateEnum runningState = idle;		//TODO use enum: idle (created but not yet started), running, paused, aborted, stopping, terminated, terminatedWithWarning, terminatedWithError, restarting
 	
 	
 	
@@ -98,5 +114,11 @@ protected:
 	static int sequenceCount = 0;	//TODO works like intended? every object created from an inherited class increments cont
 	
 	
+	private:
+	void checkExceptionMonitorsOfThisSequence();
+	void checkExceptionMonitorsOfThisSequence();
+	void checkExceptionMonitorsOfAllCallers();
+	void checkExceptionMonitorsOfAllCallers();
+	void checkExceptionMonitorsOfAllCallers();
 };
 		

@@ -6,7 +6,8 @@ class MoveTo : public Sequence {
 public:
 	MoveTo(Sequencer &S, int callerID, std::string name = "");
 	
-	int operator()(int posX, int posY);	//interface to caller
+	int operator()		(int posX, int posY);	//interface to caller
+	void setParameter	(int posX, int posY);
 	
 	bool action();
 	

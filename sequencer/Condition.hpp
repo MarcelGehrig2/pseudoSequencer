@@ -1,26 +1,37 @@
 #include "Sequencer.hpp"
-#include "Sequence.hpp"
 
+//TODO Condition constructor by name
+//TODO prevent name duplicates 
+//TODO periodic validation
 
 class Condition {	
 public:
 	Condition(Sequencer& seq);
+	Condition(Sequencer& seq, validateStyle);
 	
-	bool operator()();		// checks condition	
-	virtual bool check();	
-	virtual void validate() = 0;		// has to be overwritten (pure virtual function)
+// 	bool operator()();		// checks condition	
+	bool isTrue();			//return true, if safed conditionState is true. Validates if validateStyle==polling
+	virtual void validate() = 0;	// has to be overwritten (pure virtual function)
 	
-	void addExceptionSequence(Sequence* exceptionSequence);
+	enum validateStyleEnum {
+		polling,	//validates each time, the condition is checked (isTrue())
+		periodic,	//validates the sequence periodic
+	};
+	
+// 	void addExceptionSequence(Sequence* exceptionSequence);
 	
 protected:
-	Sequencer& S;			//reference to singleton Sequencer
-	
-	Sequence* exceptionSequence;
-	int retries = 0;
-	int maxRetries = 1;
-	
-	int counter = 0;
 	bool conditionState = false;
-	bool heritable = false;
+	validateStyleEnum validateStyle;
+	
+	
+	Sequencer& S;			//reference to singleton Sequencer
+// 	
+// 	Sequence* exceptionSequence;
+// 	int retries = 0;
+// 	int maxRetries = 1;
+// 	
+// 	int counter = 0;
+// 	bool heritable = false;
 	
 };

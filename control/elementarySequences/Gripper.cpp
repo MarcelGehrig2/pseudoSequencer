@@ -2,17 +2,19 @@
 
 int Gripper::operator()(int gripperID, std::__cxx11::string action)
 {
+	setParameter(gripperID, action);	
+	return Sequence::start();		//Has to be implemented by the control developer !!
+}
+
+void Gripper::setParameter(int gripperID, std::__cxx11::string action)
+{
+
 	this->gripperID = gripperID;
 	this->action = action;
 	
-	// always copy the code part below
-	// ///////////////////////////////
-	
-	Sequence::setIsBlocking();
-// 	Sequence::setIsNonBlocking();
-	
-	return Sequence::start();		//Has to be implemented by the control developer !!
+	Sequence::setIsBlocking();		//TODO necessary?
 }
+
 
 bool Gripper::action()
 {

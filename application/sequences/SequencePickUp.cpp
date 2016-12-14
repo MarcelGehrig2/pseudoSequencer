@@ -5,6 +5,7 @@ SequencePickUp::SequencePickUp(Sequencer &S, int callerID, std::string name = ""
 // ////////////////////////////////////////////////////////////////////////////
 	
 	moveTo = new MoveTo(S, sequenceID, "moveSequence");
+// 	moveTo = new MoveTo(S, this, "moveSequence");
 	moveTo.setTimeout(1.5);		//Timeout set for whole sequence
 	gripper = new Gripper(S, sequenceID, "openGripper Sequence");
 	//timeout is set before each step
@@ -33,6 +34,7 @@ SequencePickUp::action()
 	moveTo(12, 12);	//abovePackage
 	moveTo(10, 12);	//grippingPosition
 	gripper.setTimeout(1.5);
+	gripper->setIsBlocking();
 	
 	gripper(1, "close");
 	

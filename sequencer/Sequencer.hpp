@@ -16,6 +16,7 @@ public:
 	Sequence* getSeqenceByName(std::string name);	//TODO implementation
 	
 	void addCondition(Condition* condition);
+	Condition* getConditionByName(std::string name);	// TODO
 	
 	SequencerError* getSeqencerException();
 	

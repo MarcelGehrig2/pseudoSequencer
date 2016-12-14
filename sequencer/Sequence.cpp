@@ -54,13 +54,14 @@ int Sequence::runBlocking()
 		
 		// 3 Check postcondition
 		// /////////////////////
-		while(bool stop = false) {
-			stop = stop | checkExitCondition();	//used for normal stop of this step/sequence 
+		while(runningState == "running") {
+			if(runningState == "running") checkExitCondition();	//used for normal stop of this step/sequence 
 			
-			stop = stop | checkTimeoutOfAllCallers();	//if caller timeout -> error thrown
-			stop = stop | checkTimeoutOfThisSequence(); //if true -> timeoutAction()
+			if(runningState == "running") checkTimeoutOfAllBlockedCallers();	//if caller timeout -> error thrown
+			if(runningState == "running") checkTimeoutOfThisSequence(); //if true -> timeoutAction()
 			
-			stop = stop | checkExceptionMonitors();	//of all callers
+			if(runningState == "running") checkExceptionMonitorsOfAllCallers();		//of all callers
+			if(runningState == "running") checkExceptionMonitorsOfThisSequence();	//of all callers
 		// 	checkPause();			//TODO or us a global Condition instead?
 		// 	checkStop();			//TODO a condition as well?
 			std::this_thread::sleep_for (std::chrono::milliseconds(pollingTime));
@@ -85,8 +86,11 @@ int Sequence::run()
 		while ( ( nrOfSequenceRepetitions==0 ) || (repetitionCounter < nrOfSequenceRepetitions) ) {
 			repetitionCounter ++;
 			
+			
+			
 			if (getIsBlocking()) { runBlocking(); }
 			else { runNonBlocking(); }
+			
 			
 			if ( runningState == "restarting" ) {
 				if (nrOfSequenceRepetitions != 0 ) nrOfSequenceRepetitions++;
@@ -113,6 +117,10 @@ bool Sequence::checkPreconditions()
 
 
 
+Sequence* Sequence::getCallerSequence()
+{
+	return callerSequence;
+}
 
 
 bool Sequence::stopCondition()
@@ -147,9 +155,13 @@ std::string Sequence::getState() const {
 	return state;
 }
 
-Sequence::setState(std::string state) : state(state) {
-	return;
+Sequence::setState(std::string state) : state(state) { }
+
+runningStateEnum Sequence::getRunningState() const {
+	return runningState;
 }
+
+Sequence::setRunningState(runningStateEnum runningState) : runningState(runningState) { }
 
 std::vector< int > Sequence::getCallerStack()
 {
@@ -196,7 +208,7 @@ bool Sequence::checkTimeout(Sequence* sequence)
 }
 
 	
-bool Sequence::checkTimeoutOfAllCallers()	//does not check timeout of "this"
+bool Sequence::checkTimeoutOfAllBlockedCallers()	//does not check timeout of "this"
 {
 	//TODO if callerTimeout happens, throw sequencer exception. the caller sequence handles than the timeout action.
 	//TODO non blocking seqeuences should not inherit timeouts --> outer iterator

@@ -8,18 +8,18 @@ MoveTo::MoveTo(Sequencer &S, int callerID, std::string name = "") : Sequence(S, 
 
 int MoveTo::operator()(int posX, int posY)
 {
-	nextWaypoint << posX, posY;		//TODO check syntax
-	
-	
-	
-	// always copy the code part below
-	// ///////////////////////////////
-	
-	Sequence::setIsBlocking();
-// 	Sequence::setIsNonBlocking();
-	
+	setParameter(posX, posY);
 	return Sequence::start();		//Has to be implemented by the control developer !!
 }
+
+void MoveTo::setParameter(int posX, int posY)
+{
+	nextWaypoint << posX, posY;		//TODO check syntax
+	
+	Sequence::setIsBlocking();		//TODO necessary?
+// 	Sequence::setIsNonBlocking();
+}
+
 
 
 bool MoveTo::action() {
