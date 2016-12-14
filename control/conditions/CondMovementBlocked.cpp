@@ -1,9 +1,6 @@
 #include "CondMovementBlocked.hpp"
 
-// CondMovementBlocked::CondMovementBlocked() 
-// {
-// 	//TODO is base constructor executed
-// }
+//Base Constructor is used
 
 void CondMovementBlocked::validate()
 {

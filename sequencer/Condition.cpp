@@ -10,6 +10,7 @@ Condition::Condition(Sequencer& seq, Condition::validateStyleEnum validateStyle)
 	//TODO validateStyle == periodic
 }
 
+
 bool Condition::isTrue()
 {
 	if ( validateStyle == polling ) {

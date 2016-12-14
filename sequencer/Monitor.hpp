@@ -8,7 +8,7 @@ public:
 	Monitor(Sequence* caller, Condition condition, behaviorEnum behavior);
 	Monitor(Sequence* caller, Condition condition, behaviorEnum behavior, Sequence* exceptionSequence);
 	Monitor(Sequence* caller, Condition condition, behaviorEnum behavior, Sequence* exceptionSequence, std::string goToTarget);
-	
+
 	void setExceptionSequence(Sequence* exceptionSequence);
 	void setBehavior(behaviorEnum behavior);
 	void setGotToTarget(std::string goToTarget);

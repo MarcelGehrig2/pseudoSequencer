@@ -4,7 +4,8 @@
 
 class CondMovementBlocked : public Condition {
 public:
-// 	CondMovementBlocked();
+// 	CondMovementBlocked(Sequencer& seq, validateStyleEnum validateStyle);
+	//Base Constructor is used
 	
 	void validate();
 	

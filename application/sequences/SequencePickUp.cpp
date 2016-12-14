@@ -1,5 +1,6 @@
 #include "SequencePickUp.hpp"
-SequencePickUp::SequencePickUp(Sequencer &S, int callerID, std::string name = ""): Sequence(S, callerID, name)
+SequencePickUp::SequencePickUp(Sequencer &S, int callerID, std::string name = "")
+: Sequence(S, callerID, name)
 {
 // create sequences
 // ////////////////////////////////////////////////////////////////////////////

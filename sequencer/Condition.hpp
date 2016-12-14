@@ -7,7 +7,7 @@
 class Condition {	
 public:
 	Condition(Sequencer& seq);
-	Condition(Sequencer& seq, validateStyle);
+	Condition(Sequencer& seq, validateStyleEnum validateStyle);
 	
 // 	bool operator()();		// checks condition	
 	bool isTrue();			//return true, if safed conditionState is true. Validates if validateStyle==polling
