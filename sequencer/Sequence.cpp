@@ -5,8 +5,8 @@
 #include <thread>
 #include <chrono>
 
-Sequence::Sequence(Sequencer& seq, int callerID, std::string name="") :
-S(seq), startTime(std::chrono::steady_clock::now()) 
+Sequence::Sequence(Sequencer& S, Sequence* caller, std::string name = "") :
+S(S), startTime(std::chrono::steady_clock::now()), callerSequence(caller)
 { 
 	sequenceID = sequenceCount++;	//TODO check how many Sequence-Objects of this type are allowed. Maybe singleton.
 	if (name == "") {
@@ -22,12 +22,13 @@ S(seq), startTime(std::chrono::steady_clock::now())
 	
 	
 	//get and update callerStack
-	callerSequence = S.getSequenceByID(callerID);
-	callerStack = callerSequence.getCallerStack();
-	callerStack.push_back(callerSequence.getID());	//add latest caller
+	callerStack = callerSequence->getCallerStack();
+	callerStack.push_back(callerSequence->getID());	//add latest caller
 	//get and update callerStackBlocking
 	//TODO
 	
+	
+	//TODO get the correct SequencerException
 
 }
 
@@ -78,28 +79,39 @@ int Sequence::runNonBlocking()
 
 int Sequence::run()
 {
-	runCounter++;
+// 	bool execute = true;
+// 	if (	   ( callerSequence->getRunningState() == terminated )
+// 			&& ( true ) );
 	
-	if ( callerSequence->runningState == "running" ) {
-		repetitionCounter=0;
+	
+	if ( true ) {	//does this sequence get executed at all
+		runCounter++;
 		
-		while ( ( nrOfSequenceRepetitions==0 ) || (repetitionCounter < nrOfSequenceRepetitions) ) {
-			repetitionCounter ++;
+		if ( callerSequence->runningState == running ) {
+			repetitionCounter=0;
 			
-			
-			
-			if (getIsBlocking()) { runBlocking(); }
-			else { runNonBlocking(); }
-			
-			
-			if ( runningState == "restarting" ) {
-				if (nrOfSequenceRepetitions != 0 ) nrOfSequenceRepetitions++;
-				runningState = "running";
+			// while loop, if multiple repetition OR this sequence is RESTARTED
+			while ( ( nrOfSequenceRepetitions==0 ) || (repetitionCounter <= nrOfSequenceRepetitions) ) {
+				repetitionCounter ++;
+				
+				
+				//RUN
+				if (getIsBlocking()) { runBlocking(); }
+				else { runNonBlocking(); }
+				
+				
+				if ( runningState == restarting ) {
+					runningState = running;
+				}
+				if ( runningState == aborting )	break;
 			}
-			if ( runningState == "stopping" )	break;
 		}
+		
+		if ( runningState == aborting ) runningState = aborted;
+		else runningState = terminated;	//TODO terminated with warning/error?
 	}
-	runningState = "terminated";	//TODO terminated with warning/error	
+	
+	setCallerRunningState();	//TODO TODO TODO
 }
 
 int Sequence::start()
@@ -147,6 +159,7 @@ std::string Sequence::getName() const {
 	return name;
 }
 
+
 Sequence::setName(std::string name) : name(name) {
 	return;
 }
@@ -163,9 +176,20 @@ runningStateEnum Sequence::getRunningState() const {
 
 Sequence::setRunningState(runningStateEnum runningState) : runningState(runningState) { }
 
-std::vector< int > Sequence::getCallerStack()
+std::vector< Sequence* > Sequence::getCallerStack() const
 {
 	return callerStack;
+}
+
+SequencerException* Sequence::getSequencerException() const
+{
+	return sequencerException;
+}
+
+
+int Sequence::getID() const
+{
+	return sequenceID;
 }
 
 void Sequence::restartSequence()
@@ -231,4 +255,5 @@ bool Sequence::timeoutAction()
 {
 	S.sequencerError.throwError();
 }
+
 

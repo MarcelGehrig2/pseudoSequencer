@@ -1,10 +1,10 @@
 #include "MoveTo.hpp"
 
-MoveTo::MoveTo(Sequencer &S, int callerID, std::string name = "")
-: Sequence(S, callerID, name)
-{
-	
-}
+// MoveTo::MoveTo(Sequencer& S, Sequence* caller, std::string name = "")
+// : Sequence(S, caller, name)
+// {
+// 	
+// }
 
 
 int MoveTo::operator()(int posX, int posY)

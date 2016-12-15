@@ -5,7 +5,7 @@
 
 class SequencePickUp : public Sequence {
 public:
-	SequencePickUp();
+	SequencePickUp(Sequencer& S, Sequence* caller, std::string name = "");
 	
 
 	//Sequences

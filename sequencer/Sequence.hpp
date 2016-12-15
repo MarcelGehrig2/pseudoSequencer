@@ -1,6 +1,7 @@
 #include "Sequencer.hpp"
 #include "Condition.hpp"
 #include "SequencerException.hpp"
+#include "Monitor.hpp"
 #include <string>
 #include <vector>
 #include <chrono>
@@ -11,7 +12,7 @@ class Sequence {
 // 	friend class eeros::sequencer::Sequencer;
 	
 public:
-	Sequence(Sequencer& S, int callerID, std::string name = "");
+	Sequence(Sequencer& S, Sequence* caller, std::string name = "");
 	
 // 	virtual int operator()(std::string args) = 0;	//has to be implemented in derived class
 	int start();	//called bei operator() by derived class
@@ -37,13 +38,13 @@ public:
 	std::string getName() const;
 	void setName(std::string name);
 	int getID() const;
-	Sequence* getCallerSequence();
-	std::vector<int> getCallerStack();
-	
+	Sequence* getCallerSequence() const;
+	std::vector< Sequence* > getCallerStack() const;
+	SequencerException* getSequencerException() const;
 	
 	
 	std::string getState() const;
-	void setState(std::string state);
+	void setState(std::string state) const;
 	runningStateEnum getRunningState() const;
 	void setRunningState(runningStateEnum runningState);
 	
@@ -78,10 +79,10 @@ public:
 		paused,
 		aborting,
 		aborted,
-		stopped,
+		terminated,
 		restartingStep,
-		restarting
-	};
+		restarting,
+	};	// terminatedWithWarning, terminatedBecauseCallerMonitor
 	
 	
 protected:
@@ -92,21 +93,23 @@ protected:
 	auto startTime;
 	double timeout = 0;				//0 = not set or infinite
 	int pollingTime = 10;			//in milliseconds for checkPostconditions (including timeout and stuff)
-	int nrOfSequenceRepetitions = 0;	//number of repetitions of this sequence; 0==infinite; 1==run only once; 2==run once and repete once
+	int nrOfSequenceRepetitions = 1;	//number of repetitions of this sequence; 0==infinite; 1==run only once; 2==run once and repete once
 											//sequence restarts are not counted
 	int repetitionCounter = 0;		//how many times the sequence got repeted within a single run
 	int runCounter = 0;	
 	int timeoutsInARowCounter = 0;	//TODO when to reset??
 	
 	std::string state;				//TODO use enum,	userdefined
-	runningStateEnum runningState = idle;		//TODO use enum: idle (created but not yet started), running, paused, aborted, stopping, terminated, terminatedWithWarning, terminatedWithError, restarting
+	runningStateEnum runningState = idle;	
 	
 	
 	
 	bool isBlocking = true;			//standard run mode
-	std::vector<int> callerStack;	//vector with callerIDs. Top element is latest caller	(TODO use pointer to sequence instead?)
-	std::vector<int> callerStackBlocking;	//TODO vector with callerIDs since last non blocking call. Bottom element is the oldest blocked caller in this row.
+	std::vector< Sequence* > callerStack;	//vector with all caller sequences. Top element is latest caller
+	std::vector< Sequence* > callerStackBlocking;	//TODO vector with all sequences, which are blocked with this sequence. Bottom element is the oldest blocked caller
 	Sequence* callerSequence;
+	
+	SequencerException* sequencerException;
 	
 	std::vector< Condition* > preconditions;
 	std::vector< Condition* > postconditions;

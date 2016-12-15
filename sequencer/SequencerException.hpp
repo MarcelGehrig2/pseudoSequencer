@@ -3,21 +3,37 @@
 #include <string.h>
 
 
-class SequencerError {
+class SequencerException {
 public:
+	SequencerException();
 	
-	void throwException(Sequence* caller);
-	void throwException(Sequence* caller, std::string errorDescription);
+	void throwException(Sequence* root, Sequence* owner, behaviorEnum behavior, std::string exceptionDescription="");
 	void clearException();
-	bool isSet();
-	Sequence* getRootSequence();
-	std::string getExceptionDescription();
+	bool isSet() const;
+	Sequence* getRootSequence() const;
+	std::string getExceptionDescription()  const;
+	
+	
+	enum behaviorEnum {
+		repeteOwnerSequence,	//repete the owner sequence of this monitor
+		repeteCallerOfOwnerSequence,	//caller of the owner of this monitor
+		repeteStep,		//step, which detects the exception
+		abortOwnerSequence,
+		abortCallerofOwnerSequence,
+		abortStep,
+		goTo,
+	};
 	
 protected:
-	bool error = false;
-	Sequence* rootSequence;
-	std::string errorDescription;
+	bool exception = false;
+	Sequence* rootSequence;		//sequence, which detected the exception
+	Sequence* ownerSequence;	//owner of the monitor. often the same as the caller
+	std::string exceptionDescription;
+	Sequence* previousRootSequence;
+	Sequence* previousOwnerSequence;
+	std::string previousExceptionDescription;
+	behaviorEnum behavior;
 	
-	int errorCounter = 0;
-	int errorInARowCounter = 0;	//TODO counter is reset to 1, if two error in a row don't hav the same source
+	int exceptionCounter;		//total count of exception since sequencer start
+	int exceptionInARowCounter;
 };

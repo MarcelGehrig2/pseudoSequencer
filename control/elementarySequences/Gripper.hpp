@@ -4,7 +4,7 @@
 
 class Gripper : public Sequence {
 public:
-	// CONSTRUCTOR TODO
+	// CONSTRUCTOR: Base constructor is used
 	
 	int operator()		(int gripperID, std::string action);	//interface to caller
 	void setParameter	(int gripperID, std::string action);

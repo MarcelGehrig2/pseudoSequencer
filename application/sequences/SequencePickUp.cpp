@@ -1,14 +1,14 @@
 #include "SequencePickUp.hpp"
-SequencePickUp::SequencePickUp(Sequencer &S, int callerID, std::string name = "")
-: Sequence(S, callerID, name)
+
+SequencePickUp::SequencePickUp(Sequencer& S, Sequence* caller, std::string name = "")
+: Sequence(S, caller, name)
 {
 // create sequences
 // ////////////////////////////////////////////////////////////////////////////
 	
-	moveTo = new MoveTo(S, sequenceID, "moveSequence");
-// 	moveTo = new MoveTo(S, this, "moveSequence");
+	moveTo = new MoveTo(S, this, "moveSequence");
 	moveTo.setTimeout(1.5);		//Timeout set for whole sequence
-	gripper = new Gripper(S, sequenceID, "openGripper Sequence");
+	gripper = new Gripper(S, this, "openGripper Sequence");
 	//timeout is set before each step
 	
 	

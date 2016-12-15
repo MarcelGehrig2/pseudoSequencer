@@ -1,45 +1,80 @@
 #include "SequencerException.hpp"
+#include "Sequence.hpp"
+#include <string>
 
 
-void SequencerError::throwException(Sequence* caller)
+SequencerException::SequencerException()
+: exceptionCounter(0), exceptionInARowCounter(0)
 {
-	std::string errorDescription;
-	errorDescription = "Error from: " + caller->getName();
-	throwError(caller, errorDescription);
+
 }
 
-void SequencerError::throwException(Sequence* caller, std::__cxx11::string errorDescription)
+void SequencerException::throwException(Sequence* root, Sequence* owner, behaviorEnum setBehavior, std::string descriptionOfException="")
 {
-	error = true;
+	exception = true;
+	exceptionCounter++;
 	
-	if ( (this->rootSequence == caller)  && (this->errorDescription == errorDescription) ) {
-		errorInARowCounter++;
-	} else {
-		errorInARowCounter = 1;
+	previousRootSequence = rootSequence;
+	previousOwnerSequence = ownerSequence;
+	previousExceptionDescription = exceptionDescription;
+	rootSequence = root;
+	ownerSequence = owner;
+	behavior = setBehavior;
+	
+	if ( descriptionOfException == "" ) exceptionDescription = "Exception from: " + ownerSequence->getName();
+	else exceptionDescription = descriptionOfException;
+	
+	if (   ( previousRootSequence			== rootSequence)
+		&& ( previousOwnerSequence			== ownerSequence) 
+		&& ( previousExceptionDescription	== exceptionDescription ) ) 
+	{
+		exceptionInARowCounter++;
+	} else exceptionInARowCounter = 1;
+	
+	
+	switch( behavior ) {
+		case SequencerException::repeteOwnerSequence :
+			rootSequence->setRunningState(Sequence::aborting);
+			ownerSequence->setRunningState(Sequence::restarting);
+			break;
+		case SequencerException::repeteCallerOfOwnerSequence :
+			if( !ownerSequence->getCallerSequence() ) {	//owner seqence is allready lowest sequence (mainSequence)
+				//TODO error
+			}
+			else {
+				rootSequence->setRunningState(Sequence::aborting);
+				ownerSequence->getCallerSequence()->setRunningState(Sequence::restarting);					
+			}
+			break;
+		case SequencerException::repeteStep :
+			rootSequence->setRunningState(Sequence::restartingStep);
+			break;
+			
+		//TODO implemente remaining cases 
+			
+		default:
+			//TODO Error
+		break;
 	}
-	
-	rootSequence = caller;
-	this->errorDescription = errorDescription;
-	errorCounter++;
 }
 
 
-void SequencerError::clearException()
+void SequencerException::clearException()
 {
-	error = false;
+	exception = false;
 }
 
-bool SequencerError::isSet()
+bool SequencerException::isSet() const
 {
-	return error;
+	return exception;
 }
 
-Sequence* SequencerError::getRootSequence()
+Sequence* SequencerException::getRootSequence() const
 {
 	return rootSequence;
 }
 
-std::__cxx11::string SequencerError::getExceptionDescription()
+std::__cxx11::string SequencerException::getExceptionDescription()  const
 {
-	return errorDescription;
+	return exceptionDescription;
 }

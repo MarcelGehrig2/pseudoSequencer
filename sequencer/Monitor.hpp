@@ -1,6 +1,7 @@
 #include "Sequencer.hpp"
 #include "Sequence.hpp"
 #include "Condition.hpp"
+#include "SequencerException.hpp"
 
 
 class Monitor {
@@ -15,15 +16,6 @@ public:
 	
 	bool check();	//returns true if runningState of caller is changed
 	
-	enum behaviorEnum {
-		repeteOwnerSequence,	//repete the owner sequence of this monitor
-		repeteCallerOfOwnerSequence,	//caller of the owner of this monitor
-		repeteStep,		//step, which detects the exception
-		abortOwnerSequence,
-		abortCallerofOwnerSequence,
-		abortStep,
-		goTo,
-	};
 	
 protected:
 	Sequence* owner;
@@ -31,6 +23,7 @@ protected:
 	Sequence* exceptionSequence;
 	behaviorEnum behavior;
 	std::string goToTarget;			//
+	std::string exceptionDescription;
 	
 private:
 	void startExceptionSequence();

@@ -1,12 +1,12 @@
 #include "MoveToSafety.hpp"
 
-MoveToSafety::MoveToSafety(Sequencer& S, int callerID, std::__cxx11::string name)
-: Sequence(S, callerID, name)
+MoveToSafety::MoveToSafety(Sequencer& S, Sequence* caller, std::string name = "")
+: Sequence(S, caller, name)
 {
 // create sequences
 // ////////////////////////////////////////////////////////////////////////////
 	
-	moveTo = new MoveTo(S, sequenceID, "moveSequence");	//TODO is created at leas twice. is that ok?
+	moveTo = new MoveTo(S, this, "moveSequence");	//TODO is created at leas twice. is that ok?
 
 }
 

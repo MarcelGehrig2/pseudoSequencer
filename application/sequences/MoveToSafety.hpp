@@ -5,7 +5,7 @@
 
 class MoveToSafety : public Sequence {
 public:
-	MoveToSafety(Sequencer &S, int callerID, std::string name = "");
+	MoveToSafety(Sequencer& S, Sequence* caller, std::string name = "");
 	
 	int operator()		(int safetyPos);
 	void setParameter	(int safetyPos);

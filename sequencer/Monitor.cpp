@@ -1,5 +1,6 @@
 #include "Monitor.hpp"
 #include "Sequence.hpp"
+#include "SequencerException.hpp"
 
 
 
@@ -21,35 +22,15 @@ bool Monitor::check(Sequence* caller)	//caller is the sequence, which
 	if( condition->isTrue() ) {
 		
 		//TODO n-times repetition watch
-		switch( behavior ) {
-			case repeteOwnerSequence :
-				caller->setRunningState(Sequence::aborting);
-				owner->setRunningState(Sequence::restarting);
-				break;
-			case repeteCallerOfOwnerSequence :
-				if( !owner->getCallerSequence() ) {	//owner seqence is allready lowes sequence
-					//TODO error
-				}
-				else {
-					caller->setRunningState(Sequence::aborting);
-					owner->getCallerSequence()->setRunningState(Sequence::restarting);					
-				}
-				break;
-			case repeteStep :
-				caller->setRunningState(Sequence::restartingStep);
-				break;
-				
-			//TODO implemente remaining cases
-				
-			default:
-				//TODO Error
-			break;
-		}
-			
+		Sequence::runningStateEnum currentRunningState = caller->getRunningState();
+		
+		caller->getSequencerException()->throwException(caller, owner, behavior, exceptionDescription);		
 		startExceptionSequence();
 		
+		if ( currentRunningState != caller->getRunningState() ) return true;
+		else return false;
 	}
-	else return true;
+	else return false;
 }
 
 void Monitor::startExceptionSequence()

@@ -3,7 +3,7 @@
 
 class sequenceRendevous : public Sequence {
 public:
-	sequenceRendevous();
+	sequenceRendevous(Sequencer& S, Sequence* caller, std::string name = "");
 	
 	sequencePickUp pickUp(std::string name);
 	
