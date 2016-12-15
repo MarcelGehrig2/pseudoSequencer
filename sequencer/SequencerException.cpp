@@ -99,6 +99,9 @@ void SequencerException::setRunningStateOfThisSequence(Sequence* sequence)
 void SequencerException::clearException()	//TODO ?
 {
 	exception = false;
+	invokingSequenceRunningState = Sequence::notSet;
+	ownerSequenceRunningState = Sequence::notSet;
+	callerOfOwnerSequenceRunningState = Sequence::notSet;
 }
 
 bool SequencerException::isSet() const

@@ -1,6 +1,6 @@
 #include "Sequence.hpp"
 #include "Condition.hpp"
-#include "SequencerError.hpp"
+#include "SequencerException.hpp"
 #include <string>
 #include <list>
 
@@ -10,6 +10,7 @@
 class Sequencer {
 public:
 	Sequencer(auto& cs, auto& ss);
+	~Sequencer();	//TODO clean everything
 	
 	void addSequence(Sequence* sequence);	//new sequence-object registered in sequences
 	Sequence* getSequenceByID(int ID);				//TODO implementation
@@ -18,13 +19,14 @@ public:
 	void addCondition(Condition* condition);
 	Condition* getConditionByName(std::string name);	// TODO
 	
-	SequencerError* getSeqencerException();
+	SequencerException& newSequencerException();
+// 	SequencerException* getSeqencerException();
 	
 	auto& getCS();
 	auto& getSS();
 	
 private:
-	SequencerError sequencerException;
+	std::list< SequencerException > sequencerExceptions;
 	std::list< Sequence* > sequences;
 	std::list< Condition* > conditions;
 	auto& cs;

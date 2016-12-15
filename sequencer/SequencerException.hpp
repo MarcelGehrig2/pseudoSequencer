@@ -9,6 +9,7 @@ public:
 	
 	void throwException(Sequence* invoking, Sequence* owner, behaviorEnum behavior, std::string exceptionDescription="");
 	void clearException();
+	void reset();			//resets all member value
 	bool isSet() const;
 	Sequence* getRootSequence() const;
 	Sequence* getOwnerSequence() const;

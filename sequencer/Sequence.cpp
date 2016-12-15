@@ -28,8 +28,10 @@ S(S), startTime(std::chrono::steady_clock::now()), callerSequence(caller)
 	//TODO
 	
 	
-	//TODO get the correct SequencerException
-
+	//inherit SequencerException from caller
+	//TODO if mainSequence no caller exists
+	sequencerException = callerSequence->getSequencerException();
+	
 }
 
 int Sequence::runBlocking()
@@ -186,7 +188,7 @@ std::vector< Sequence* > Sequence::getCallerStack() const
 	return callerStack;
 }
 
-SequencerException* Sequence::getSequencerException() const
+SequencerException& Sequence::getSequencerException() const
 {
 	return sequencerException;
 }

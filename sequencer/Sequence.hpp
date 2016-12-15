@@ -40,7 +40,7 @@ public:
 	int getID() const;
 	Sequence* getCallerSequence() const;
 	std::vector< Sequence* > getCallerStack() const;
-	SequencerException* getSequencerException() const;
+	SequencerException& getSequencerException() const;
 	
 	
 	std::string getState() const;
@@ -111,7 +111,7 @@ protected:
 	std::vector< Sequence* > callerStackBlocking;	//TODO vector with all sequences, which are blocked with this sequence. Bottom element is the oldest blocked caller
 	Sequence* callerSequence;
 	
-	SequencerException* sequencerException;
+	SequencerException& sequencerException;
 	
 	std::vector< Condition* > preconditions;
 	std::vector< Condition* > postconditions;
