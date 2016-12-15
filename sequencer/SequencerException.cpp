@@ -9,22 +9,25 @@ SequencerException::SequencerException()
 
 }
 
-void SequencerException::throwException(Sequence* root, Sequence* owner, behaviorEnum setBehavior, std::string descriptionOfException="")
+void SequencerException::throwException(Sequence* invoking, Sequence* owner, behaviorEnum setBehavior, std::string descriptionOfException="")
 {
 	exception = true;
 	exceptionCounter++;
 	
-	previousRootSequence = rootSequence;
+	previousRootSequence = invokingSequence;
 	previousOwnerSequence = ownerSequence;
 	previousExceptionDescription = exceptionDescription;
-	rootSequence = root;
+	invokingSequence = invoking;
 	ownerSequence = owner;
+	callerOfOwnerSequence = ownerSequence->getCallerSequence();
 	behavior = setBehavior;
 	
+	//create default name if empty:
 	if ( descriptionOfException == "" ) exceptionDescription = "Exception from: " + ownerSequence->getName();
 	else exceptionDescription = descriptionOfException;
 	
-	if (   ( previousRootSequence			== rootSequence)
+	//check if same exception got thrown multiple times:
+	if (   ( previousRootSequence			== invokingSequence)
 		&& ( previousOwnerSequence			== ownerSequence) 
 		&& ( previousExceptionDescription	== exceptionDescription ) ) 
 	{
@@ -32,22 +35,23 @@ void SequencerException::throwException(Sequence* root, Sequence* owner, behavio
 	} else exceptionInARowCounter = 1;
 	
 	
+	invokingSequenceRunningState = ownerSequenceRunningState = callerOfOwnerSequenceRunningState = Sequence::notSet;
 	switch( behavior ) {
 		case SequencerException::repeteOwnerSequence :
-			rootSequence->setRunningState(Sequence::aborting);
-			ownerSequence->setRunningState(Sequence::restarting);
+			invokingSequenceRunningState = Sequence::aborting;			//sequence of following lines does matter
+			ownerSequenceRunningState = Sequence::restarting;		//invoking and owner can be the same
 			break;
 		case SequencerException::repeteCallerOfOwnerSequence :
-			if( !ownerSequence->getCallerSequence() ) {	//owner seqence is allready lowest sequence (mainSequence)
+			if( !callerOfOwnerSequence ) {	//owner seqence is allready lowest sequence (mainSequence)
 				//TODO error
 			}
 			else {
-				rootSequence->setRunningState(Sequence::aborting);
-				ownerSequence->getCallerSequence()->setRunningState(Sequence::restarting);					
+				invokingSequenceRunningState = Sequence::aborting;
+				callerOfOwnerSequenceRunningState = Sequence::restarting;
 			}
 			break;
 		case SequencerException::repeteStep :
-			rootSequence->setRunningState(Sequence::restartingStep);
+			invokingSequenceRunningState = Sequence::restartingStep;
 			break;
 			
 		//TODO implemente remaining cases 
@@ -56,10 +60,43 @@ void SequencerException::throwException(Sequence* root, Sequence* owner, behavio
 			//TODO Error
 		break;
 	}
+	
+	setAllRelevantRunningStates();
 }
 
+void SequencerException::setAllRelevantRunningStates()
+{
+			setRunningStateOfThisSequence( invokingSequence );
+			setRunningStateOfThisSequence( ownerSequence );
+			setRunningStateOfThisSequence( callerOfOwnerSequence );
+}
 
-void SequencerException::clearException()
+void SequencerException::setRunningStateOfThisSequence(Sequence* sequence)
+{
+	if ( this->isSet() ) {
+		
+		switch( sequence ) {
+			case invokingSequence :
+				if( invokingSequenceRunningState != Sequence::notSet )
+					sequence->setRunningState(invokingSequenceRunningState);
+				break;
+			case ownerSequence :
+				if( ownerSequenceRunningState != Sequence::notSet )
+					sequence->setRunningState(ownerSequenceRunningState);
+				break;				
+			case callerOfOwnerSequence :
+				if( callerOfOwnerSequenceRunningState != Sequence::notSet )
+					sequence->setRunningState(callerOfOwnerSequenceRunningState);
+				break;
+			default :
+					sequence->setRunningState(Sequence::aborting);
+				break;
+		}
+				
+	}
+}
+
+void SequencerException::clearException()	//TODO ?
 {
 	exception = false;
 }
@@ -71,7 +108,12 @@ bool SequencerException::isSet() const
 
 Sequence* SequencerException::getRootSequence() const
 {
-	return rootSequence;
+	return invokingSequence;
+}
+
+Sequence* SequencerException::getOwnerSequence() const
+{
+	return ownerSequence;
 }
 
 std::__cxx11::string SequencerException::getExceptionDescription()  const

@@ -83,8 +83,11 @@ int Sequence::run()
 // 	if (	   ( callerSequence->getRunningState() == terminated )
 // 			&& ( true ) );
 	
+	// if sequencerException is active: abort or repete sequence, depending on exception behavior:
+	sequencerException->setRunningStateOfThisSequence(this);
+
 	
-	if ( true ) {	//does this sequence get executed at all
+	if ( runningState != aborting ) {
 		runCounter++;
 		
 		if ( callerSequence->runningState == running ) {
@@ -100,6 +103,8 @@ int Sequence::run()
 				else { runNonBlocking(); }
 				
 				
+				// if sequencerException is active: abort or repete sequence, depending on exception behavior:
+				sequencerException->setRunningStateOfThisSequence(this);
 				if ( runningState == restarting ) {
 					runningState = running;
 				}
@@ -111,13 +116,13 @@ int Sequence::run()
 		else runningState = terminated;	//TODO terminated with warning/error?
 	}
 	
-	setCallerRunningState();	//TODO TODO TODO
 }
 
 int Sequence::start()
 {
 	run();
 }
+
 
 
 bool Sequence::checkPreconditions()

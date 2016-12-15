@@ -47,6 +47,7 @@ public:
 	void setState(std::string state) const;
 	runningStateEnum getRunningState() const;
 	void setRunningState(runningStateEnum runningState);
+// 	void setCallerRunningState(runningStateEnum runningState);
 	
 	void restartSequence();
 	void pauseSequence();
@@ -74,6 +75,7 @@ public:
 	eeros::logger::Logger<eeros::logger::LogWriter> log;
 	
 	enum runningStateEnum {
+		notSet,
 		idle,
 		running,
 		paused,
