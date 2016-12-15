@@ -1,1 +1,0 @@
-/usr/bin/c++   -g   CMakeFiles/pseudosequencer.dir/main.o  -o pseudosequencer -rdynamic 
