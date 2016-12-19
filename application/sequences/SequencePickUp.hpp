@@ -1,20 +1,15 @@
 #include "../../sequencer/Sequence.hpp"
-#include "../../control/elementarySequences/MoveTo.hpp"
-#include "../../control/elementarySequences/Gripper.hpp"
 #include "../../control/conditions/CondMovementBlocked.hpp"
 
 class SequencePickUp : public Sequence {
 public:
 	SequencePickUp(Sequencer& S, Sequence* caller, std::string name = "");
 	
-
-	//Steps
-	MoveTo* moveTo;
-	Gripper* gripper;
+	bool action();
 	
-	//Sequences
 	
 	//Conditions
+	// ////////////////////////////////////////////////////////////////////////
 	CondMovementBlocked* condMovementBlocked;
 
 	

@@ -1,36 +1,36 @@
 #include "Gripper.hpp"
 
-int Gripper::operator()(int gripperID, std::__cxx11::string action)
+int Gripper::operator()(int gripperID, gripperStateEnum action)
 {
 	setParameter(gripperID, action);	
-	return Sequence::start();		//Has to be implemented by the control developer !!
+	return Step::start();		//Has to be implemented by the control developer !!
 }
 
-void Gripper::setParameter(int gripperID, std::__cxx11::string action)
+void Gripper::setParameter(int gripperID, gripperStateEnum action)
 {
 
 	this->gripperID = gripperID;
 	this->action = action;
 	
-	Sequence::setIsBlocking();		//TODO necessary?
+	Step::setIsBlocking();		//TODO necessary?
 }
 
 
 bool Gripper::action()
 {
-	if ( (gripperID == 0) && (action.compare("open")) ) {
+	if ( (gripperID == 0) && (action = open) ) {
 		S.getCS().gripperA.open();
 	}
 	
-	if ( (gripperID == 0) && (action.compare("close")) ) {
+	if ( (gripperID == 0) && (action = close) ) {
 		S.getCS().gripperA.close();
 	}
 	
-	if ( (gripperID == 1) && (action.compare("open")) ) {
+	if ( (gripperID == 1) && (action = open) ) {
 		S.getCS().gripperB.open();
 	}
 	
-	if ( (gripperID == 1) && (action.compare("close")) ) {
+	if ( (gripperID == 1) && (action = close) ) {
 		S.getCS().gripperB.close();
 	}
 

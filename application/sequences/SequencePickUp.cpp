@@ -1,20 +1,19 @@
 #include "SequencePickUp.hpp"
+#include "../../control/steps/MoveTo.hpp"
+#include "../../control/steps/Gripper.hpp"
 
 SequencePickUp::SequencePickUp(Sequencer& S, Sequence* caller, std::string name = "")
 : Sequence(S, caller, name)
 {
-// create steps
-// ////////////////////////////////////////////////////////////////////////////
-	moveTo = new MoveTo(S, this, "moveSequence");
-	moveTo.setTimeout(1.5);		//Timeout set for whole sequence
-	gripper = new Gripper(S, this, "openGripper Sequence");
-	//timeout is set before each step
+	
+	// create sequences
+	// ////////////////////////////////////////////////////////////////////////
+// no other sequences needed
 	
 	
 	
-	
-// create conditions
-// ////////////////////////////////////////////////////////////////////////////
+	// create conditions
+	// ////////////////////////////////////////////////////////////////////////
 	condMovementBlocked = new CondMovementBlocked(S);
 	
 	
@@ -26,17 +25,27 @@ SequencePickUp::SequencePickUp(Sequencer& S, Sequence* caller, std::string name 
 
 
 // moveTo();
-SequencePickUp::action()
+bool SequencePickUp::action()
 {
+// create steps
+// ////////////////////////////////////////////////////////////////////////////
+	MoveTo moveTo;
+	moveTo.setTimeout(1.5);		//Timeout set for whole sequence	
+	Gripper gripper;
+	//timeout is set before each step
+	
+	
+	
+// Sequence
+// ////////////////////////////////////////////////////////////////////////////
 	moveTo(10, 15);	//TODO waypoints
 	gripper.setTimeout(1.0);
-	gripper(1, "open");
+	gripper(1, Gripper::open);
 	moveTo(12, 12);	//abovePackage
 	moveTo(10, 12);	//grippingPosition
 	gripper.setTimeout(1.5);
-	gripper->setIsBlocking();
 	
-	gripper(1, "close");
+	gripper(1, Gripper::close);
 	
 	if ( S.getCS().packageAvailable()==false ) {
 		this->runningState="restarting";

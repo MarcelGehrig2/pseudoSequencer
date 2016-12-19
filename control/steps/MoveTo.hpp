@@ -1,8 +1,8 @@
-#include "../../sequencer/Sequence.hpp"
+#include "../../sequencer/Step.hpp"
 
 #include <eeros/math/Matrix.hpp>
 
-class MoveTo : public Sequence {
+class MoveTo : public Step {
 public:
 // 	MoveTo(Sequencer& S, Sequence* caller, std::string name = "");
 	

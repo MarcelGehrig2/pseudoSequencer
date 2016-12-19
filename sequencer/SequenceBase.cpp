@@ -5,17 +5,10 @@
 #include <thread>
 #include <chrono>
 
-SequenceBase::SequenceBase(Sequencer& S, SequenceBase* caller, std::string name = "") :
-S(S), startTime(std::chrono::steady_clock::now()), callerSequence(caller)
+SequenceBase::SequenceBase(Sequencer& S, SequenceBase* caller)
+: S(S), startTime(std::chrono::steady_clock::now()), callerSequence(caller)
 { 
-	sequenceID = sequenceCount++;	//TODO check how many Sequence-Objects of this type are allowed. Maybe singleton.
-	if (name == "") {
-		setName("sequence " + sequenceID);		//TODO syntax
-	} else {
-		//TODO what is, if name already exists?
-		//TODO Error if name allready exists
-		setName(name);
-	}
+
 	
 	setState("idle");
 	
@@ -128,6 +121,12 @@ int SequenceBase::start()
 
 
 
+bool SequenceBase::isStep() const
+{
+	return false;
+}
+
+
 bool SequenceBase::checkPreconditions()
 {
 	bool pass;
@@ -161,15 +160,6 @@ void SequenceBase::setIsNonBlocking()
 bool SequenceBase::getIsBlocking() const
 {
 	return isBlocking;
-}
-	
-std::string SequenceBase::getName() const {
-	return name;
-}
-
-
-SequenceBase::setName(std::string name) : name(name) {
-	return;
 }
 
 std::string SequenceBase::getState() const {

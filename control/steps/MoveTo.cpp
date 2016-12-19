@@ -10,14 +10,14 @@
 int MoveTo::operator()(int posX, int posY)
 {
 	setParameter(posX, posY);
-	return Sequence::start();		//Has to be implemented by the control developer !!
+	return Step::start();		//Has to be implemented by the control developer !!
 }
 
 void MoveTo::setParameter(int posX, int posY)
 {
 	nextWaypoint << posX, posY;		//TODO check syntax
 	
-	Sequence::setIsBlocking();		//TODO necessary?
+	Step::setIsBlocking();		//TODO necessary?
 // 	Sequence::setIsNonBlocking();
 }
 

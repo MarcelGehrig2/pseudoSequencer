@@ -1,19 +1,22 @@
 #include "SequenceRendevous.hpp"
+#include "SequencePickUp.hpp"
 
 SequenceRendevous::SequenceRendevous(Sequencer& S, Sequence* caller, std::__cxx11::string name)
 : Sequence(S, caller, name)
 {
-
-// create steps
-// ////////////////////////////////////////////////////////////////////////////
-	gripper = new Gripper(S, this, "openGripper Sequence");
 	
 // create sequences
 // ////////////////////////////////////////////////////////////////////////////
 	pickUp = new SequencePickUp(S, this, "openGripper Sequence");
-	
-		SequencePickUp pickUp;
-	SequenceBringToRendezvous bringToRendezvous;
+	pickUp->setTimeout(5);
+	//TODO:
+// 	SequenceBringToRendezvous* bringToRendezvous = new bringToRendezvous(S, this, "bringToRendezvous Sequence");
+	bringToRendezvous = new BringToRendezvous(S, this, "bringToRendezvous Sequence");
+	bringToRendezvous->setTimeout(1);
+	//TODO: waitFor instruction
+	waitForSecondGripper = new WaitForSecondGripper(S, this, "waitForSecondGripper Sequence");
+	waitForSecondGripper->setTimeout(7);
+// 	SequenceWaitForSecondGripper waitForSecondGripper();
 
 // create conditions
 // ////////////////////////////////////////////////////////////////////////////
@@ -22,30 +25,35 @@ SequenceRendevous::SequenceRendevous(Sequencer& S, Sequence* caller, std::__cxx1
 }
 
 
-// create sequences
-// ////////////////////////////////////////////////////////////////////////////
+bool SequenceRendevous::action()
+{
+	// create steps
+	// ////////////////////////////////////////////////////////////////////////////
+	Gripper gripper;
+	gripper.setTimeout(1);
 
-sequencePickUp pickUp("pickUp0");
-sequenceBringToRendezvous bringToRendezvous();
-sequenceWaitForSecondGripper waitForSecondGripper();
-
- 
-// run seqence
-// ////////////////////////////////////////////////////////////////////////////
-
-int pickUpReturnValue = pickUp.run();		//blocking call
-//??? will object be automatically deleted after call?
-
-//pickUpReturnValue decision
-
-int bringToRendezvousReturnValue = bringToRendezvous.run();
-
-setState("ready");
 	
-int waitForSecondGripperReturnValue waitForSecondGripper.run();		//blocking call
-//??? seqenceSecondGrippe is not started in this Object, how do they communicate?
+	// run seqence
+	// ////////////////////////////////////////////////////////////////////////////
 
-int openGripperReturnValue openGripper.run();
-setState("open");
+	pickUp->runBlocking();
 
-if (this.stop = true) break;
+	if ( pickUp->getState() == "movement Blocked" ) ; 	//TODO SequenceA->runBlocking()
+	else if ( pickUp->getState() == "package lost" ) ;	//TODO SequenceB->runBlocking()
+	else //TODO SequenceC->runBlocking()
+	
+	bringToRendezvous->runBlocking();
+	
+	setState("ready");
+	
+	//TODO waitFor
+// 	waitFor( S.getSeqenceByName("conveyorSequence")->getState() == "ready", 7 );
+	waitForSecondGripper->runBlocking();
+	
+	gripper(1, Gripper::open);
+	
+	setState("open");
+
+	if (this.stop = false) restartSequence();
+
+}

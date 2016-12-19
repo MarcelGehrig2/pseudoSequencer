@@ -12,7 +12,7 @@ class SequenceBase {
 // 	friend class eeros::sequencer::Sequencer;
 	
 public:
-	SequenceBase(Sequencer& S, SequenceBase* caller, std::string name = "");
+	SequenceBase(Sequencer& S, SequenceBase* caller);
 	
 // 	virtual int operator()(std::string args) = 0;	//has to be implemented in derived class
 	int start();	//called bei operator() by derived class
@@ -21,6 +21,8 @@ public:
 	int runNonBlocking();
 	int run();				//uses standard value "isBlocking"
 	void restartSequence();
+	
+	virtual bool isStep() const;
 	
 	bool checkPreconditions();
 	bool checkPostconditions();
@@ -35,9 +37,8 @@ public:
 	
 	void addMonitor(Monitor monitor); //TODO Exception Monitor
 	
-	std::string getName() const;
-	void setName(std::string name);
-	int getID() const;
+
+	virtual int getID() const;		//steps allways have ID=-99
 	SequenceBase* getCallerSequence() const;
 	std::vector< SequenceBase* > getCallerStack() const;
 	SequencerException& getSequencerException() const;
@@ -90,8 +91,7 @@ public:
 protected:
 	Sequencer &S;			//reference to singleton Sequencer
 	
-	std::string name;
-	int sequenceID = 0;
+
 	auto startTime;
 	double timeout = 0;				//0 = not set or infinite
 	int pollingTime = 10;			//in milliseconds for checkPostconditions (including timeout and stuff)
@@ -116,8 +116,7 @@ protected:
 	std::vector< Condition* > preconditions;
 	std::vector< Condition* > postconditions;
 	
-	static int sequenceCount = 0;	//TODO works like intended? every object created from an inherited class increments cont
-	
+
 	
 	private:
 	void checkExceptionMonitorsOfThisSequence();
