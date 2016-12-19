@@ -2,26 +2,27 @@
 #include "../../control/elementarySequences/MoveTo.hpp"
 #include "../../control/elementarySequences/Gripper.hpp"
 #include "../../control/conditions/CondMovementBlocked.hpp"
+#include "SequencePickUp.hpp"
 
-class SequencePickUp : public Sequence {
+
+class SequenceRendevous : public Sequence {
 public:
-	SequencePickUp(Sequencer& S, Sequence* caller, std::string name = "");
+	SequenceRendevous(Sequencer& S, Sequence* caller, std::string name = "");
+// 	
 	
-
-	//Steps
-	MoveTo* moveTo;
+	
+// 	//Steps
+// 	MoveTo* moveTo;
 	Gripper* gripper;
 	
 	//Sequences
+	SequencePickUp pickUp;
+	SequenceBringToRendezvous bringToRendezvous;
 	
 	//Conditions
 	CondMovementBlocked* condMovementBlocked;
-
 	
 	
 private:	
 	
 };
-
-
-

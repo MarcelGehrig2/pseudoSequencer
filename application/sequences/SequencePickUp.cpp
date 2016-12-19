@@ -3,9 +3,8 @@
 SequencePickUp::SequencePickUp(Sequencer& S, Sequence* caller, std::string name = "")
 : Sequence(S, caller, name)
 {
-// create sequences
+// create steps
 // ////////////////////////////////////////////////////////////////////////////
-	
 	moveTo = new MoveTo(S, this, "moveSequence");
 	moveTo.setTimeout(1.5);		//Timeout set for whole sequence
 	gripper = new Gripper(S, this, "openGripper Sequence");

@@ -1,6 +1,26 @@
-#include "sequenceRendevous.hpp"
+#include "SequenceRendevous.hpp"
 
-//TODO call base consturctor and define derived constructor
+SequenceRendevous::SequenceRendevous(Sequencer& S, Sequence* caller, std::__cxx11::string name)
+: Sequence(S, caller, name)
+{
+
+// create steps
+// ////////////////////////////////////////////////////////////////////////////
+	gripper = new Gripper(S, this, "openGripper Sequence");
+	
+// create sequences
+// ////////////////////////////////////////////////////////////////////////////
+	pickUp = new SequencePickUp(S, this, "openGripper Sequence");
+	
+		SequencePickUp pickUp;
+	SequenceBringToRendezvous bringToRendezvous;
+
+// create conditions
+// ////////////////////////////////////////////////////////////////////////////
+	
+	
+}
+
 
 // create sequences
 // ////////////////////////////////////////////////////////////////////////////
