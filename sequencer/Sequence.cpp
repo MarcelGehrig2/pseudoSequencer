@@ -13,6 +13,7 @@ S(S), startTime(std::chrono::steady_clock::now()), callerSequence(caller)
 		setName("sequence " + sequenceID);		//TODO syntax
 	} else {
 		//TODO what is, if name already exists?
+		//TODO Error if name allready exists
 		setName(name);
 	}
 	
