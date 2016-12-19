@@ -9,7 +9,7 @@ SequencerException::SequencerException()
 
 }
 
-void SequencerException::throwException(Sequence* invoking, Sequence* owner, behaviorEnum setBehavior, std::string descriptionOfException="")
+void SequencerException::throwException(SequenceBase* invoking, SequenceBase* owner, behaviorEnum setBehavior, std::string descriptionOfException="")
 {
 	exception = true;
 	exceptionCounter++;
@@ -35,23 +35,23 @@ void SequencerException::throwException(Sequence* invoking, Sequence* owner, beh
 	} else exceptionInARowCounter = 1;
 	
 	
-	invokingSequenceRunningState = ownerSequenceRunningState = callerOfOwnerSequenceRunningState = Sequence::notSet;
+	invokingSequenceRunningState = ownerSequenceRunningState = callerOfOwnerSequenceRunningState = SequenceBase::notSet;
 	switch( behavior ) {
 		case SequencerException::repeteOwnerSequence :
-			invokingSequenceRunningState = Sequence::aborting;			//sequence of following lines does matter
-			ownerSequenceRunningState = Sequence::restarting;		//invoking and owner can be the same
+			invokingSequenceRunningState = SequenceBase::aborting;			//sequence of following lines does matter
+			ownerSequenceRunningState = SequenceBase::restarting;		//invoking and owner can be the same
 			break;
 		case SequencerException::repeteCallerOfOwnerSequence :
 			if( !callerOfOwnerSequence ) {	//owner seqence is allready lowest sequence (mainSequence)
 				//TODO error
 			}
 			else {
-				invokingSequenceRunningState = Sequence::aborting;
-				callerOfOwnerSequenceRunningState = Sequence::restarting;
+				invokingSequenceRunningState = SequenceBase::aborting;
+				callerOfOwnerSequenceRunningState = SequenceBase::restarting;
 			}
 			break;
 		case SequencerException::repeteStep :
-			invokingSequenceRunningState = Sequence::restartingStep;
+			invokingSequenceRunningState = SequenceBase::restartingStep;
 			break;
 			
 		//TODO implemente remaining cases 
@@ -71,25 +71,25 @@ void SequencerException::setAllRelevantRunningStates()
 			setRunningStateOfThisSequence( callerOfOwnerSequence );
 }
 
-void SequencerException::setRunningStateOfThisSequence(Sequence* sequence)
+void SequencerException::setRunningStateOfThisSequence(SequenceBase* sequence)
 {
 	if ( this->isSet() ) {
 		
 		switch( sequence ) {
 			case invokingSequence :
-				if( invokingSequenceRunningState != Sequence::notSet )
+				if( invokingSequenceRunningState != SequenceBase::notSet )
 					sequence->setRunningState(invokingSequenceRunningState);
 				break;
 			case ownerSequence :
-				if( ownerSequenceRunningState != Sequence::notSet )
+				if( ownerSequenceRunningState != SequenceBase::notSet )
 					sequence->setRunningState(ownerSequenceRunningState);
 				break;				
 			case callerOfOwnerSequence :
-				if( callerOfOwnerSequenceRunningState != Sequence::notSet )
+				if( callerOfOwnerSequenceRunningState != SequenceBase::notSet )
 					sequence->setRunningState(callerOfOwnerSequenceRunningState);
 				break;
 			default :
-					sequence->setRunningState(Sequence::aborting);
+					sequence->setRunningState(SequenceBase::aborting);
 				break;
 		}
 				
@@ -99,9 +99,9 @@ void SequencerException::setRunningStateOfThisSequence(Sequence* sequence)
 void SequencerException::clearException()	//TODO ?
 {
 	exception = false;
-	invokingSequenceRunningState = Sequence::notSet;
-	ownerSequenceRunningState = Sequence::notSet;
-	callerOfOwnerSequenceRunningState = Sequence::notSet;
+	invokingSequenceRunningState = SequenceBase::notSet;
+	ownerSequenceRunningState = SequenceBase::notSet;
+	callerOfOwnerSequenceRunningState = SequenceBase::notSet;
 }
 
 bool SequencerException::isSet() const
@@ -109,12 +109,12 @@ bool SequencerException::isSet() const
 	return exception;
 }
 
-Sequence* SequencerException::getRootSequence() const
+SequenceBase* SequencerException::getRootSequence() const
 {
 	return invokingSequence;
 }
 
-Sequence* SequencerException::getOwnerSequence() const
+SequenceBase* SequencerException::getOwnerSequence() const
 {
 	return ownerSequence;
 }

@@ -1,11 +1,11 @@
-#include "Sequence.hpp"
+#include "SequenceBase.hpp"
 #include "Sequencer.hpp"
 #include "SequencerException.hpp"
 // #include "Sequencer.hpp"
 #include <thread>
 #include <chrono>
 
-Sequence::Sequence(Sequencer& S, Sequence* caller, std::string name = "") :
+SequenceBase::SequenceBase(Sequencer& S, SequenceBase* caller, std::string name = "") :
 S(S), startTime(std::chrono::steady_clock::now()), callerSequence(caller)
 { 
 	sequenceID = sequenceCount++;	//TODO check how many Sequence-Objects of this type are allowed. Maybe singleton.
@@ -35,7 +35,7 @@ S(S), startTime(std::chrono::steady_clock::now()), callerSequence(caller)
 	
 }
 
-int Sequence::runBlocking()
+int SequenceBase::runBlocking()
 {
 	setIsBlocking();
 	
@@ -74,13 +74,13 @@ int Sequence::runBlocking()
 
 }
 
-int Sequence::runNonBlocking()
+int SequenceBase::runNonBlocking()
 {
 	setIsNonBlocking();
 	
 }
 
-int Sequence::run()
+int SequenceBase::run()
 {
 // 	bool execute = true;
 // 	if (	   ( callerSequence->getRunningState() == terminated )
@@ -121,14 +121,14 @@ int Sequence::run()
 	
 }
 
-int Sequence::start()
+int SequenceBase::start()
 {
 	run();
 }
 
 
 
-bool Sequence::checkPreconditions()
+bool SequenceBase::checkPreconditions()
 {
 	bool pass;
 	pass = !( S.sequencerException.error );		//Subsequence does not start, if an error is activ. Like a timeout of a caller sequence.
@@ -137,70 +137,70 @@ bool Sequence::checkPreconditions()
 
 
 
-Sequence* Sequence::getCallerSequence()
+SequenceBase* SequenceBase::getCallerSequence()
 {
 	return callerSequence;
 }
 
 
-bool Sequence::stopCondition()
+bool SequenceBase::stopCondition()
 {
 	return true;	// Sequence is immediately stopped after action is performed.
 }
 
-void Sequence::setIsBlocking()
+void SequenceBase::setIsBlocking()
 {
 	isBlocking = true;
 }
 
-void Sequence::setIsNonBlocking()
+void SequenceBase::setIsNonBlocking()
 {
 	isBlocking = false;
 }
 
-bool Sequence::getIsBlocking() const
+bool SequenceBase::getIsBlocking() const
 {
 	return isBlocking;
 }
 	
-std::string Sequence::getName() const {
+std::string SequenceBase::getName() const {
 	return name;
 }
 
 
-Sequence::setName(std::string name) : name(name) {
+SequenceBase::setName(std::string name) : name(name) {
 	return;
 }
 
-std::string Sequence::getState() const {
+std::string SequenceBase::getState() const {
 	return state;
 }
 
-Sequence::setState(std::string state) : state(state) { }
+SequenceBase::setState(std::string state) : state(state) { }
 
-runningStateEnum Sequence::getRunningState() const {
+runningStateEnum SequenceBase::getRunningState() const {
 	return runningState;
 }
 
-Sequence::setRunningState(runningStateEnum runningState) : runningState(runningState) { }
+SequenceBase::setRunningState(runningStateEnum runningState) : runningState(runningState) { }
 
-std::vector< Sequence* > Sequence::getCallerStack() const
+std::vector< SequenceBase* > SequenceBase::getCallerStack() const
 {
 	return callerStack;
 }
 
-SequencerException& Sequence::getSequencerException() const
+SequencerException& SequenceBase::getSequencerException() const
 {
 	return sequencerException;
 }
 
 
-int Sequence::getID() const
+int SequenceBase::getID() const
 {
 	return sequenceID;
 }
 
-void Sequence::restartSequence()
+void SequenceBase::restartSequence()
 {
 	state="restarting";
 }
@@ -208,7 +208,7 @@ void Sequence::restartSequence()
 
 
 //Timeout handling
-bool Sequence::checkTimeoutOfThisSequence()
+bool SequenceBase::checkTimeoutOfThisSequence()
 {
 	//TODO this sequences timout, detected by a sub sequence. now clear exception and do timeout action. 
 	//clear error, if it is caused by a called seqeuence, beacause of the timeout of this seqeuence
@@ -221,13 +221,13 @@ bool Sequence::checkTimeoutOfThisSequence()
 // 	return checkTimeout(this);	//TODO
 }
 
-bool Sequence::checkTimeout(int sequenceID)
+bool SequenceBase::checkTimeout(int sequenceID)
 {
-	Sequence* sequence = S.getSequenceByID(sequenceID);
+	SequenceBase* sequence = S.getSequenceByID(sequenceID);
 	return checkTimeout(&sequence);
 }
 
-bool Sequence::checkTimeout(Sequence* sequence)
+bool SequenceBase::checkTimeout(SequenceBase* sequence)
 {
 	//TODO implement Timeout check
 	if (sequence->timeout > 0) {
@@ -240,7 +240,7 @@ bool Sequence::checkTimeout(Sequence* sequence)
 }
 
 	
-bool Sequence::checkTimeoutOfAllBlockedCallers()	//does not check timeout of "this"
+bool SequenceBase::checkTimeoutOfAllBlockedCallers()	//does not check timeout of "this"
 {
 	//TODO if callerTimeout happens, throw sequencer exception. the caller sequence handles than the timeout action.
 	//TODO non blocking seqeuences should not inherit timeouts --> outer iterator
@@ -259,9 +259,10 @@ bool Sequence::checkTimeoutOfAllBlockedCallers()	//does not check timeout of "th
 	return isTimeout;		//if true, at least on1 timeout occoured
 }
 
-bool Sequence::timeoutAction()
+bool SequenceBase::timeoutAction()
 {
 	S.sequencerError.throwError();
 }
+
 
 

@@ -3,9 +3,9 @@
 // #include <string.h>
 
 
-class MoveToSafety : public Sequence {
+class MoveToSafety : public SequenceBase {
 public:
-	MoveToSafety(Sequencer& S, Sequence* caller, std::string name = "");
+	MoveToSafety(Sequencer& S, SequenceBase* caller, std::string name = "");
 	
 	int operator()		(int safetyPos);
 	void setParameter	(int safetyPos);

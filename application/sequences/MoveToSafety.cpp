@@ -1,7 +1,7 @@
 #include "MoveToSafety.hpp"
 
-MoveToSafety::MoveToSafety(Sequencer& S, Sequence* caller, std::string name = "")
-: Sequence(S, caller, name)
+MoveToSafety::MoveToSafety(Sequencer& S, SequenceBase* caller, std::string name = "")
+: SequenceBase(S, caller, name)
 {
 // create sequences
 // ////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@ MoveToSafety::MoveToSafety(Sequencer& S, Sequence* caller, std::string name = ""
 int MoveToSafety::operator()(int safetyPos)
 {
 	setParameter(safetyPos);
-	return Sequence::start();		//Has to be implemented by the control developer !!
+	return SequenceBase::start();		//Has to be implemented by the control developer !!
 }
 
 
@@ -22,7 +22,7 @@ void MoveToSafety::setParameter(int safetyPos)
 {
 	this->safetyPos=safetyPos;
 	
-	Sequence::setIsBlocking();		//TODO necessary?
+	SequenceBase::setIsBlocking();		//TODO necessary?
 // 	Sequence::setIsNonBlocking();
 }
 
