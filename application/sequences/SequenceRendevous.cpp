@@ -9,23 +9,28 @@ SequenceRendevous::SequenceRendevous(Sequencer& S, Sequence* caller, std::__cxx1
 	// ////////////////////////////////////////////////////////////////////////
 	pickUp = new SequencePickUp(S, this, "pickUp Sequence");
 	pickUp->setTimeout(5);
-	//TODO:
-// 	SequenceBringToRendezvous* bringToRendezvous = new bringToRendezvous(S, this, "bringToRendezvous Sequence");
-	bringToRendezvous = new BringToRendezvous(S, this, "bringToRendezvous Sequence");
+	
+	bringToRendezvous = new BringToRendezvous(S, this, "bringToRendezvous");
 	bringToRendezvous->setTimeout(1);
+	
 	//TODO: waitFor instruction
-	waitForSecondGripper = new WaitForSecondGripper(S, this, "waitForSecondGripper Sequence");
+	waitForSecondGripper = new WaitForSecondGripper(S, this, "waitForSecondGripper");
 	waitForSecondGripper->setTimeout(7);
-// 	SequenceWaitForSecondGripper waitForSecondGripper();
+	waitForSecondGripper->setTimeoutBehavior(Monitor::repeteCallerOfOwnerSequence);
+	
+	exceptionSequenceMovementBlocked = new ExceptionSequenceMovementBlocked((S, this, "exception sequence movement blocked");
 
+	
 	// create conditions
 	// ////////////////////////////////////////////////////////////////////////
-	// TODO
+	condMovementBlocked = new CondMovementBlocked(S);
+	// TODO create conditions in sequencer? or main sequence?
 	
 
 	// create monitors
 	// ////////////////////////////////////////////////////////////////////////
 	monitorMovementBlocked = Monitor(this, condMovementBlocked, Monitor::abortOwnerSequence);
+	monitorMovementBlocked.setExceptionSequence(exceptionSequenceMovementBlocked);
 	this->addMonitor( &monitorMovementBlocked );
 }
 

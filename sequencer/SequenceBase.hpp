@@ -61,6 +61,7 @@ public:
 	bool checkTimeoutOfAllBlockedCallers();		//excluding "this" sequence, goes up to (but without) latest caller of a non blocking sequence
 	bool checkTimeoutOfThisSequence();
 	virtual timeoutAction();				//action when timout occours: standard throw error
+	void setTimeoutBehavior(Monitor::behaviorEnum behavior);
 	
 	// run mode
 	void setIsBlocking();		//standard run mode

@@ -16,6 +16,7 @@ public:
 	SequencePickUp* pickUp;
 	Sequence* bringToRendezvous;
 	Sequence* waitForSecondGripper;
+	Sequence* exceptionSequenceMovementBlocked;
 	
 	// Conditions
 	// ////////////////////////////////////////////////////////////////////////

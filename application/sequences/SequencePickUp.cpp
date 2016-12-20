@@ -10,11 +10,11 @@ SequencePickUp::SequencePickUp(Sequencer& S, Sequence* caller, std::string name 
 	// ////////////////////////////////////////////////////////////////////////
 // no other sequences needed
 	
-	
+	//TODO TODO TODO monitor packet lost
 	
 	// create conditions
 	// ////////////////////////////////////////////////////////////////////////
-	condMovementBlocked = new CondMovementBlocked(S);
+// 	condMovementBlocked = new CondMovementBlocked(S);	inherited from caller
 	
 	
 // add implicit conditions
