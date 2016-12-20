@@ -20,9 +20,9 @@ MainSequence::MainSequence(Sequencer& S, Sequence* caller, std::__cxx11::string 
 	// ////////////////////////////////////////////////////////////////////////
 	//TODO syntax
 	//TODO destruction of monitors -> not on heap?
-	monitorStop = Monitor(this, condStop, Monitor::abortOwnerSequence);
+	monitorStop = Monitor(this, condStop, Behavior::abortOwnerSequence);
 	this->addMonitor( &monitorStop );
-	monitorPause = Monitor(this, condPause, Monitor::pause);
+	monitorPause = Monitor(this, condPause, Behavior::pause);
 	this->addMonitor( &monitorPause );
 }
 

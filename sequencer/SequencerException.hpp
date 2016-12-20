@@ -1,5 +1,6 @@
 #include "Sequencer.hpp"
 #include "Sequence.hpp"
+#include "Behavior.hpp"
 #include <string.h>
 
 
@@ -7,7 +8,7 @@ class SequencerException {
 public:
 	SequencerException();
 	
-	void throwException(Sequence* invoking, Sequence* owner, behaviorEnum behavior, std::string exceptionDescription="");
+	void throwException(Sequence* invoking, Sequence* owner, Behavior::Enumerator behavior, std::string exceptionDescription="");
 	void clearException();
 	void reset();			//resets all member value
 	bool isSet() const;
@@ -16,17 +17,7 @@ public:
 // 	Sequence* getCallerOfOwnerSequence() const;
 	std::string getExceptionDescription()  const;
 	void setRunningStateOfThisSequence(Sequence* sequence);	
-	
-	enum behaviorEnum {
-		notSet,
-		repeteOwnerSequence,	//repete the owner sequence of this monitor
-		repeteCallerOfOwnerSequence,	//caller of the owner of this monitor
-		repeteStep,		//step, which detects the exception
-		abortOwnerSequence,
-		abortCallerofOwnerSequence,
-		abortStep,
-		goTo,
-	};
+
 	
 // protected:
 private:
@@ -38,7 +29,7 @@ private:
 	Sequence* previousRootSequence;
 	Sequence* previousOwnerSequence;
 	std::string previousExceptionDescription;
-	behaviorEnum behavior;
+	Behavior::Enumerator behavior;
 	Sequence::runningStateEnum invokingSequenceRunningState;
 	Sequence::runningStateEnum ownerSequenceRunningState;
 	Sequence::runningStateEnum callerOfOwnerSequenceRunningState;

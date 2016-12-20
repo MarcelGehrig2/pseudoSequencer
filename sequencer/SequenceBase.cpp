@@ -57,8 +57,8 @@ int SequenceBase::runBlocking()
 			if(runningState == "running") checkTimeoutOfAllBlockedCallers();	//if caller timeout -> error thrown
 			if(runningState == "running") checkTimeoutOfThisSequence(); //if true -> timeoutAction()
 			
-			if(runningState == "running") checkExceptionMonitorsOfAllCallers();		//of all callers
-			if(runningState == "running") checkExceptionMonitorsOfThisSequence();	//of all callers
+			if(runningState == "running") checkMonitorsOfAllCallers();		//of all callers
+			if(runningState == "running") checkMonitorsOfThisSequence();	//of all callers
 		// 	checkPause();			//TODO or us a global Condition instead?
 		// 	checkStop();			//TODO a condition as well?
 			std::this_thread::sleep_for (std::chrono::milliseconds(pollingTime));
@@ -129,7 +129,7 @@ bool SequenceBase::isStep() const
 
 bool SequenceBase::checkPreconditions()
 {
-	bool pass;
+	bool pass;		//TODO
 	pass = !( S.sequencerException.error );		//Subsequence does not start, if an error is activ. Like a timeout of a caller sequence.
 	return pass;
 }

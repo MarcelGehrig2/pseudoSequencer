@@ -14,6 +14,12 @@ Sequence::Sequence(Sequencer& S, SequenceBase* caller, std::__cxx11::string name
 	
 }
 
+Sequence::~Sequence()
+{
+	//TODO remove this sequence from list in Sequencer
+}
+
+
 
 
 int Sequence::operator()()
@@ -21,6 +27,10 @@ int Sequence::operator()()
 	return SequenceBase::start();
 }
 
+void Sequence::addMonitor(Monitor* monitor)
+{
+	monitors.push_back(monitor);
+}
 
 
 

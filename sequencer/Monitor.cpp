@@ -4,13 +4,13 @@
 
 
 
-Monitor::Monitor(SequenceBase* owner, Condition* condition, Monitor::behaviorEnum behavior)
+Monitor::Monitor(SequenceBase* owner, Condition* condition, Behavior::enumerator behavior)
 : Monitor(owner, condition, behavior, NULL)	{ }
 
-Monitor::Monitor(SequenceBase* owner, Condition* condition, Monitor::behaviorEnum behavior, SequenceBase* exceptionSequence)
+Monitor::Monitor(SequenceBase* owner, Condition* condition, Behavior::enumerator behavior, SequenceBase* exceptionSequence)
 : Monitor(owner, condition, behavior, exceptionSequence, "") { }
 
-Monitor::Monitor(SequenceBase* owner, Condition* condition, Monitor::behaviorEnum behavior, SequenceBase* exceptionSequence, std::__cxx11::string goToTarget)
+Monitor::Monitor(SequenceBase* owner, Condition* condition, Behavior::enumerator behavior, SequenceBase* exceptionSequence, std::__cxx11::string goToTarget)
 : owner(owner), condition((condition), behavior), exceptionSequence(exceptionSequence), goToTarget(goToTarget)
 {
 
@@ -41,7 +41,7 @@ void Monitor::startExceptionSequence()
 }
 
 
-void Monitor::setBehavior(Monitor::behaviorEnum behavior)
+void Monitor::setBehavior(Behavior::enumerator behavior)
 {
 	this->behavior = behavior;
 }

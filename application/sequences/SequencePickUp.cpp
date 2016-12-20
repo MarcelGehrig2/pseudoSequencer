@@ -43,9 +43,9 @@ bool SequencePickUp::action()
 	gripper(1, Gripper::open);
 	moveTo(12, 12);	//abovePackage
 	moveTo(10, 12);	//grippingPosition
-	gripper.setTimeout(1.5);
 	
-	gripper(1, Gripper::close);
+	gripper.setTimeout(1.5);
+	gripper(1, close);
 	
 	if ( S.getCS().packageAvailable()==false ) {
 		this->runningState="restarting";

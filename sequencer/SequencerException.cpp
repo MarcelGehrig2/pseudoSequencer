@@ -37,11 +37,11 @@ void SequencerException::throwException(SequenceBase* invoking, SequenceBase* ow
 	
 	invokingSequenceRunningState = ownerSequenceRunningState = callerOfOwnerSequenceRunningState = SequenceBase::notSet;
 	switch( behavior ) {
-		case SequencerException::repeteOwnerSequence :
+		case Behavior::repeteOwnerSequence :
 			invokingSequenceRunningState = SequenceBase::aborting;			//sequence of following lines does matter
 			ownerSequenceRunningState = SequenceBase::restarting;		//invoking and owner can be the same
 			break;
-		case SequencerException::repeteCallerOfOwnerSequence :
+		case Behavior::repeteCallerOfOwnerSequence :
 			if( !callerOfOwnerSequence ) {	//owner seqence is allready lowest sequence (mainSequence)
 				//TODO error
 			}
@@ -50,7 +50,7 @@ void SequencerException::throwException(SequenceBase* invoking, SequenceBase* ow
 				callerOfOwnerSequenceRunningState = SequenceBase::restarting;
 			}
 			break;
-		case SequencerException::repeteStep :
+		case Behavior::repeteStep :
 			invokingSequenceRunningState = SequenceBase::restartingStep;
 			break;
 			

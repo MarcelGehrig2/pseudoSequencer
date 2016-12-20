@@ -2,6 +2,7 @@
 #include "Condition.hpp"
 #include "SequencerException.hpp"
 #include "Monitor.hpp"
+#include "Behavior.hpp"
 #include <string>
 #include <vector>
 #include <chrono>
@@ -35,7 +36,7 @@ public:
 	
 // 	virtual void set(std::string instruction, type value);	//TODO ??? polymorph or string
 	
-	void addMonitor(Monitor monitor); //TODO Exception Monitor
+// 	void addMonitor(Monitor monitor); //TODO Exception Monitor
 	
 
 	virtual int getID() const;		//steps allways have ID=-99
@@ -61,7 +62,8 @@ public:
 	bool checkTimeoutOfAllBlockedCallers();		//excluding "this" sequence, goes up to (but without) latest caller of a non blocking sequence
 	bool checkTimeoutOfThisSequence();
 	virtual timeoutAction();				//action when timout occours: standard throw error
-	void setTimeoutBehavior(Monitor::behaviorEnum behavior);
+	void setTimeoutBehavior(Behavior::enumerator behavior);
+	void setTimeoutExceptionSequence(Sequence* sequence);
 	
 	// run mode
 	void setIsBlocking();		//standard run mode
@@ -120,10 +122,7 @@ protected:
 
 	
 	private:
-	void checkExceptionMonitorsOfThisSequence();
-	void checkExceptionMonitorsOfThisSequence();
-	void checkExceptionMonitorsOfAllCallers();
-	void checkExceptionMonitorsOfAllCallers();
-	void checkExceptionMonitorsOfAllCallers();
+	void checkMonitorsOfThisSequence();
+	void checkMonitorsOfAllCallers();
 };
 		
