@@ -7,11 +7,13 @@
 class Condition {	
 public:
 	Condition(Sequencer& seq);
-	Condition(Sequencer& seq, validateStyleEnum validateStyle);
+	Condition(Sequencer& seq, validateStyleEnum validateStyle, float cycleTime);
 	
 // 	bool operator()();		// checks condition	
 	bool isTrue();			//return true, if safed conditionState is true. Validates if validateStyle==polling
 	virtual void validate() = 0;	// has to be overwritten (pure virtual function)
+	
+	
 	
 	enum validateStyleEnum {
 		polling,	//validates each time, the condition is checked (isTrue())
@@ -23,6 +25,9 @@ public:
 protected:
 	bool conditionState = false;
 	validateStyleEnum validateStyle;
+// 	behaviorEnum behavior = notSet;
+	
+	float cycleTime;	//1sec
 	
 	
 	Sequencer& S;			//reference to singleton Sequencer

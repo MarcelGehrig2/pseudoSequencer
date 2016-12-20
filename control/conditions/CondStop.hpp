@@ -1,15 +1,11 @@
 #include "../../sequencer/Condition.hpp"
 
 
-
-class CondMovementBlocked : public Condition {
+class CondStop : public Condition {
 public:
-	CondMovementBlocked();
 	
 	void validate();
 	
-	
 private:
-	
 	
 };

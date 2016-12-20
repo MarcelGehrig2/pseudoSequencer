@@ -2,10 +2,10 @@
 #include "Sequencer.hpp"
 
 Condition::Condition(Sequencer& seq)
-: Condition(seq, polling) { }
+: Condition(seq, polling, 0) { }
 
-Condition::Condition(Sequencer& seq, Condition::validateStyleEnum validateStyle)
-: S(seq), validateStyle(validateStyle)
+Condition::Condition(Sequencer& seq, Condition::validateStyleEnum validateStyle, float cycleTime)
+: S(seq), validateStyle(validateStyle), cycleTime(cycleTime)
 {
 	//TODO validateStyle == periodic
 }
@@ -23,6 +23,7 @@ bool Condition::isTrue()
 		//TODO Throw EEROS Error
 	}
 }
+
 
 
 

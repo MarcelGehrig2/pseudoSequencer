@@ -5,9 +5,9 @@ SequenceRendevous::SequenceRendevous(Sequencer& S, Sequence* caller, std::__cxx1
 : Sequence(S, caller, name)
 {
 	
-// create sequences
-// ////////////////////////////////////////////////////////////////////////////
-	pickUp = new SequencePickUp(S, this, "openGripper Sequence");
+	// create sequences
+	// ////////////////////////////////////////////////////////////////////////
+	pickUp = new SequencePickUp(S, this, "pickUp Sequence");
 	pickUp->setTimeout(5);
 	//TODO:
 // 	SequenceBringToRendezvous* bringToRendezvous = new bringToRendezvous(S, this, "bringToRendezvous Sequence");
@@ -18,10 +18,15 @@ SequenceRendevous::SequenceRendevous(Sequencer& S, Sequence* caller, std::__cxx1
 	waitForSecondGripper->setTimeout(7);
 // 	SequenceWaitForSecondGripper waitForSecondGripper();
 
-// create conditions
-// ////////////////////////////////////////////////////////////////////////////
+	// create conditions
+	// ////////////////////////////////////////////////////////////////////////
+	// TODO
 	
-	
+
+	// create monitors
+	// ////////////////////////////////////////////////////////////////////////
+	monitorMovementBlocked = Monitor(this, condMovementBlocked, Monitor::abortOwnerSequence);
+	this->addMonitor( &monitorMovementBlocked );
 }
 
 

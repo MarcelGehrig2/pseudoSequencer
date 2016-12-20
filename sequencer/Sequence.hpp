@@ -1,4 +1,5 @@
 #include "SequenceBase.hpp"
+#include "Monitor.hpp"
 
 
 class Sequence : public SequenceBase {
@@ -8,6 +9,8 @@ public:
 	std::string getName() const;
 	
 	int operator() ();
+	
+	void addMonitor(Monitor* monitor);	//TODO implement
 	
 	//TODO run(
 	//TODO runBlocking()
