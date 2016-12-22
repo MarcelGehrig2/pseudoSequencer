@@ -32,8 +32,9 @@ BaseSequence::BaseSequence(Sequencer& S, BaseSequence* caller)
 	//timeout
 	timeout = 0;	//0 == not set == no timeout
 	behaviorTimeout = Behavior::abortOwnerSequence;
-	timeoutCondition(S, timeout);
-	timeoutMonitor(this, &timeoutCondition, behaviorTimeout);
+	timeoutCondition( S, timeout );
+	timeoutMonitor( this, &timeoutCondition, behaviorTimeout );
+	addMonitor( &timeoutMonitor ) ;
 }
 
 int BaseSequence::runBlocking()
@@ -42,11 +43,10 @@ int BaseSequence::runBlocking()
 	
 	// 1 Check precondition
 	// ////////////////////
-	bool preconditionsPass = checkPreconditions();	//Only preconditions of this seqeuences are checked
-							//TODO blocking or jump over
+	bool preconditionsPass = checkPreconditions();	//including monitors of all caller
 	
 	
-	if( (runningState == "running") && preconditionsPass ) {		//checkPreconditions did not change the runningState
+	if( preconditionsPass ) {		//checkPreconditions did not change the runningState
 	
 		// 2 Action
 		// ////////
@@ -134,6 +134,11 @@ void BaseSequence::setPollingTime(int timeInMilliseconds)
 	pollingTime = timeInMilliseconds;
 }
 
+void BaseSequence::addMonitor(Monitor* monitor)
+{
+	monitors.push_back(monitor);
+}
+
 
 bool BaseSequence::isStep() const
 {
@@ -143,9 +148,15 @@ bool BaseSequence::isStep() const
 
 bool BaseSequence::checkPreconditions()
 {
-	bool pass;		//TODO
-	pass = !( S.sequencerException.error );		//Subsequence does not start, if an error is activ. Like a timeout of a caller sequence.
-	return pass;
+	bool fail;		//TODO
+	
+	checkAllMonitors();		// can change runningState
+	
+	if ( runningState != running ) fail = true; 
+	
+	//TODO what happens, if this sequence could resolve??
+
+	return !fail;
 }
 
 

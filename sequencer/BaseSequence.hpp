@@ -34,7 +34,6 @@ public:
 	
 // 	virtual void set(std::string instruction, type value);	//TODO ??? polymorph or string
 	
-// 	void addMonitor(Monitor monitor); //TODO Exception Monitor
 	
 	void setID(int ID);
 	int getID() const;		//steps allways have ID=-99
@@ -45,7 +44,10 @@ public:
 	
 	
 	//TODO  moinitor exception timeout?....
+	// Monitors
+	// ////////////////////////////////////////////////////////////////////////
 	void setPollingTime(int timeInMilliseconds);
+	void addMonitor(Monitor* monitor);
 	
 	std::string getState() const;
 	void setState(std::string state) const;
@@ -62,9 +64,9 @@ public:
 // 	bool checkTimeoutOfThisSequence();
 // --> replaced with timeoutMonitor
 	
-	//TODO exception sequence and behavior
-	virtual timeoutAction();				//action when timout occours: standard throw error
-	
+
+	// Timeout
+	// ////////////////////////////////////////////////////////////////////////
 	void setTimeoutTime(double timeoutInSec);		//in seconds. For this sequence
 	void setTimeoutBehavior(Behavior::enumerator behavior);	//default is
 	void setTimeoutExceptionSequence(Sequence* sequence);
@@ -128,6 +130,7 @@ protected:
 	
 	private:
 	int sequenceID;
+	void checkAllMonitors();
 	void checkMonitorsOfThisSequence();
 	void checkMonitorsOfAllCallers();
 	

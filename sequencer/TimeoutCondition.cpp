@@ -10,9 +10,12 @@ TimeoutCondition::TimeoutCondition(Sequencer& seq, double timeInSec)
 
 bool TimeoutCondition::valdiate()
 {
+	if ( timeInSec == 0 ) return false;		//timeout is not activated
+	else {
 	auto now = std::chrono::steady_clock::now();
-	if (std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime) > timeInSec*1000) return true;
-		else return false;
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime) > timeInSec*1000) return true;
+			else return false;
+	}
 }
 
 
