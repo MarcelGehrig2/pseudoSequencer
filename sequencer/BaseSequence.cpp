@@ -1,11 +1,11 @@
-#include "SequenceBase.hpp"
+#include "BaseSequence.hpp"
 #include "Sequencer.hpp"
 #include "SequencerException.hpp"
 // #include "Sequencer.hpp"
 #include <thread>
 #include <chrono>
 
-SequenceBase::SequenceBase(Sequencer& S, SequenceBase* caller)
+BaseSequence::BaseSequence(Sequencer& S, BaseSequence* caller)
 : S(S), startTime(std::chrono::steady_clock::now()), callerSequence(caller)
 { 
 
@@ -26,9 +26,17 @@ SequenceBase::SequenceBase(Sequencer& S, SequenceBase* caller)
 	//TODO if mainSequence no caller exists
 	sequencerException = callerSequence->getSequencerException();
 	
+	
+	setPollingTime(10);
+	
+	//timeout
+	timeout = 0;	//0 == not set == no timeout
+	behaviorTimeout = Behavior::abortOwnerSequence;
+	timeoutCondition(S, timeout);
+	timeoutMonitor(this, &timeoutCondition, behaviorTimeout);
 }
 
-int SequenceBase::runBlocking()
+int BaseSequence::runBlocking()
 {
 	setIsBlocking();
 	
@@ -67,13 +75,13 @@ int SequenceBase::runBlocking()
 
 }
 
-int SequenceBase::runNonBlocking()
+int BaseSequence::runNonBlocking()
 {
 	setIsNonBlocking();
 	
 }
 
-int SequenceBase::run()
+int BaseSequence::run()
 {
 // 	bool execute = true;
 // 	if (	   ( callerSequence->getRunningState() == terminated )
@@ -114,20 +122,26 @@ int SequenceBase::run()
 	
 }
 
-int SequenceBase::start()
+int BaseSequence::start()
 {
 	run();
 }
 
 
 
-bool SequenceBase::isStep() const
+void BaseSequence::setPollingTime(int timeInMilliseconds)
+{
+	pollingTime = timeInMilliseconds;
+}
+
+
+bool BaseSequence::isStep() const
 {
 	return false;
 }
 
 
-bool SequenceBase::checkPreconditions()
+bool BaseSequence::checkPreconditions()
 {
 	bool pass;		//TODO
 	pass = !( S.sequencerException.error );		//Subsequence does not start, if an error is activ. Like a timeout of a caller sequence.
@@ -136,72 +150,72 @@ bool SequenceBase::checkPreconditions()
 
 
 
-SequenceBase* SequenceBase::getCallerSequence()
+BaseSequence* BaseSequence::getCallerSequence()
 {
 	return callerSequence;
 }
 
 
-bool SequenceBase::stopCondition()
+bool BaseSequence::stopCondition()
 {
 	return true;	// Sequence is immediately stopped after action is performed.
 }
 
-void SequenceBase::setIsBlocking()
+void BaseSequence::setIsBlocking()
 {
 	isBlocking = true;
 }
 
-void SequenceBase::setIsNonBlocking()
+void BaseSequence::setIsNonBlocking()
 {
 	isBlocking = false;
 }
 
-bool SequenceBase::getIsBlocking() const
+bool BaseSequence::getIsBlocking() const
 {
 	return isBlocking;
 }
 
-std::string SequenceBase::getState() const {
+std::string BaseSequence::getState() const {
 	return state;
 }
 
-SequenceBase::setState(std::string state) : state(state) { }
+BaseSequence::setState(std::string state) : state(state) { }
 
-runningStateEnum SequenceBase::getRunningState() const {
+runningStateEnum BaseSequence::getRunningState() const {
 	return runningState;
 }
 
-SequenceBase::setRunningState(runningStateEnum runningState) : runningState(runningState) { }
+BaseSequence::setRunningState(runningStateEnum runningState) : runningState(runningState) { }
 
-std::vector< SequenceBase* > SequenceBase::getCallerStack() const
+std::vector< BaseSequence* > BaseSequence::getCallerStack() const
 {
 	return callerStack;
 }
 
-std::vector< SequenceBase* > SequenceBase::getCallerStackBlocking() const
+std::vector< BaseSequence* > BaseSequence::getCallerStackBlocking() const
 {
 	return callerStackBlocking;
 }
 
 
-SequencerException& SequenceBase::getSequencerException() const
+SequencerException& BaseSequence::getSequencerException() const
 {
 	return sequencerException;
 }
 
-void SequenceBase::setID(int ID)
+void BaseSequence::setID(int ID)
 {
 	sequenceID = ID;
 }
 
 
-int SequenceBase::getID() const
+int BaseSequence::getID() const
 {
 	return sequenceID;
 }
 
-void SequenceBase::restartSequence()
+void BaseSequence::restartSequence()
 {
 	state="restarting";
 }
@@ -209,7 +223,7 @@ void SequenceBase::restartSequence()
 
 
 //Timeout handling
-bool SequenceBase::checkTimeoutOfThisSequence()
+bool BaseSequence::checkTimeoutOfThisSequence()
 {
 	//TODO this sequences timout, detected by a sub sequence. now clear exception and do timeout action. 
 	//clear error, if it is caused by a called seqeuence, beacause of the timeout of this seqeuence
@@ -222,13 +236,13 @@ bool SequenceBase::checkTimeoutOfThisSequence()
 // 	return checkTimeout(this);	//TODO
 }
 
-bool SequenceBase::checkTimeout(int sequenceID)
+bool BaseSequence::checkTimeout(int sequenceID)
 {
-	SequenceBase* sequence = S.getSequenceByID(sequenceID);
+	BaseSequence* sequence = S.getSequenceByID(sequenceID);
 	return checkTimeout(&sequence);
 }
 
-bool SequenceBase::checkTimeout(SequenceBase* sequence)
+bool BaseSequence::checkTimeout(BaseSequence* sequence)
 {
 	//TODO implement Timeout check
 	if (sequence->timeout > 0) {
@@ -241,7 +255,7 @@ bool SequenceBase::checkTimeout(SequenceBase* sequence)
 }
 
 	
-bool SequenceBase::checkTimeoutOfAllBlockedCallers()	//does not check timeout of "this"
+bool BaseSequence::checkTimeoutOfAllBlockedCallers()	//does not check timeout of "this"
 {
 	//TODO if callerTimeout happens, throw sequencer exception. the caller sequence handles than the timeout action.
 	//TODO non blocking seqeuences should not inherit timeouts --> outer iterator
@@ -260,10 +274,36 @@ bool SequenceBase::checkTimeoutOfAllBlockedCallers()	//does not check timeout of
 	return isTimeout;		//if true, at least on1 timeout occoured
 }
 
-bool SequenceBase::timeoutAction()
+bool BaseSequence::timeoutAction()
 {
 	S.sequencerError.throwError();
 }
+
+
+// Timeout	(is a monitor)
+// ////////////////////////////////////////////////////////////////////////////
+
+void BaseSequence::setTimeoutTime(double timeoutInSec)
+{
+	timeoutCondition.setTime(timeoutInSec);
+}
+
+void BaseSequence::setTimeoutBehavior(Behavior::enumerator behavior)
+{
+	timeoutMonitor.setBehavior(behavior);
+}
+
+void BaseSequence::setTimeoutExceptionSequence(Sequence* sequence)
+{
+	timeoutMonitor.setExceptionSequence(sequence);
+}
+
+void BaseSequence::resetTimeout()
+{
+	timeoutCondition.resetTimeout();
+}
+
+
 
 
 

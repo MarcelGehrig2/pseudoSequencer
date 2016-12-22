@@ -14,7 +14,7 @@ Condition::Condition(Sequencer& seq, Condition::validateStyleEnum validateStyle,
 bool Condition::isTrue()
 {
 	if ( validateStyle == polling ) {
-		validate();
+		conditionState = validate();
 		return conditionState;
 	}
 	else if ( validateStyle == periodic )

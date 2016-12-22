@@ -7,13 +7,13 @@
 
 class Monitor {
 public:
-	Monitor(Sequence* caller, Condition condition, Behavior::enumerator behavior);
-	Monitor(Sequence* caller, Condition condition, Behavior::enumerator behavior, Sequence* exceptionSequence);
-	Monitor(Sequence* caller, Condition condition, Behavior::enumerator behavior, Sequence* exceptionSequence, std::string goToTarget);
+	Monitor(SequenceBase* owner, Condition* condition, Behavior::enumerator behavior);
+	Monitor(SequenceBase* owner, Condition* condition, Behavior::enumerator behavior, Sequence* exceptionSequence);
+	Monitor(SequenceBase* owner, Condition* condition, Behavior::enumerator behavior, Sequence* exceptionSequence, std::string goToTarget);
 
 	void setExceptionSequence(Sequence* exceptionSequence);
 	void setBehavior(Behavior::enumerator behavior);
-	void setGotToTarget(std::string goToTarget);
+// 	void setGotToTarget(std::string goToTarget);
 	
 	bool check();	//returns true if runningState of caller is changed
 	
@@ -22,9 +22,9 @@ public:
 
 	
 protected:
-	Sequence* owner;
+	SequenceBase* owner;
 	Condition* condition;
-	Sequence* exceptionSequence;
+	SequenceBase* exceptionSequence;
 	Behavior::enumerator behavior;
 	std::string goToTarget;			//
 	std::string exceptionDescription;

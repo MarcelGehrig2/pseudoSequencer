@@ -1,9 +1,9 @@
 #include "SequenceBase.hpp"
 
 
-class Step : public SequenceBase {
+class Step : public BaseSequence {
 public:
-	Step(Sequencer& S, SequenceBase* caller);
+	Step(Sequencer& S, BaseSequence* caller);
 
 	
 	bool isStep() const;

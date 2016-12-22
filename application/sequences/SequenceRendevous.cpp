@@ -40,7 +40,7 @@ bool SequenceRendevous::action()
 	// create steps
 	// ////////////////////////////////////////////////////////////////////////////
 	Gripper gripper;
-	gripper.setTimeout(1);
+	gripper.setTimeoutTime(1);
 
 	
 	// run seqence

@@ -1,5 +1,6 @@
 #include "Sequencer.hpp"
 #include "Condition.hpp"
+#include "TimeoutCondition.hpp"
 #include "SequencerException.hpp"
 #include "Monitor.hpp"
 #include "Behavior.hpp"
@@ -8,12 +9,12 @@
 #include <chrono>
 #include <functional>
 
-class SequenceBase {
+class BaseSequence {
 	
 // 	friend class eeros::sequencer::Sequencer;
 	
 public:
-	SequenceBase(Sequencer& S, SequenceBase* caller);
+	BaseSequence(Sequencer& S, BaseSequence* caller);
 	
 // 	virtual int operator()(std::string args) = 0;	//has to be implemented in derived class
 	int start();	//called bei operator() by derived class
@@ -37,14 +38,14 @@ public:
 	
 	void setID(int ID);
 	int getID() const;		//steps allways have ID=-99
-	SequenceBase* getCallerSequence() const;
-	std::vector< SequenceBase* > getCallerStack() const;
-	std::vector< SequenceBase* > getCallerStackBlocking() const;
+	BaseSequence* getCallerSequence() const;
+	std::vector< BaseSequence* > getCallerStack() const;
+	std::vector< BaseSequence* > getCallerStackBlocking() const;
 // 	SequencerException& getSequencerException() const;
 	
 	
 	//TODO  moinitor exception timeout?....
-	
+	void setPollingTime(int timeInMilliseconds);
 	
 	std::string getState() const;
 	void setState(std::string state) const;
@@ -54,16 +55,20 @@ public:
 
 	
 	//TODO Timeout
-	void setTimeout(double timeoutInSec);		//in seconds. For this sequence
 // 	bool checkTimeout();
-	bool checkTimeout(int sequenceID);
-	bool checkTimeout(SequenceBase* sequence);
-	bool checkTimeoutOfAllBlockedCallers();		//excluding "this" sequence, goes up to (but without) latest caller of a non blocking sequence
-	bool checkTimeoutOfThisSequence();
+// 	bool checkTimeout(int sequenceID);
+// 	bool checkTimeout(BaseSequence* seqvuence);
+// 	bool checkTimeoutOfAllBlockedCallers();		//excluding "this" sequence, goes up to (but without) latest caller of a non blocking sequence
+// 	bool checkTimeoutOfThisSequence();
+// --> replaced with timeoutMonitor
+	
 	//TODO exception sequence and behavior
 	virtual timeoutAction();				//action when timout occours: standard throw error
+	
+	void setTimeoutTime(double timeoutInSec);		//in seconds. For this sequence
 	void setTimeoutBehavior(Behavior::enumerator behavior);	//default is
 	void setTimeoutExceptionSequence(Sequence* sequence);
+	void resetTimeout();
 	
 	// run mode
 	void setIsBlocking();		//standard run mode
@@ -95,11 +100,9 @@ protected:
 	Sequencer &S;			//reference to singleton Sequencer
 	
 
-	auto startTime;
-	double timeout = 0;				//0 = not set or infinite
-	Behavior::enumerator behaviorTimeout = Behavior::abortOwnerSequence;
+
 	
-	int pollingTime = 10;			//in milliseconds for checkPostconditions (including timeout and stuff)
+	int pollingTime;					//in milliseconds for checkPostconditions (including monitors)
 	int nrOfSequenceRepetitions = 1;	//number of repetitions of this sequence; 0==infinite; 1==run only once; 2==run once and repete once
 											//sequence restarts are not counted
 	int repetitionCounter = 0;		//how many times the sequence got repeted within a single run
@@ -112,9 +115,9 @@ protected:
 	
 	
 	bool isBlocking = true;			//standard run mode
-	std::vector< SequenceBase* > callerStack;	//vector with all caller sequences. Top element is latest caller
-	std::vector< SequenceBase* > callerStackBlocking;	//TODO vector with all sequences, which are blocked with this sequence. Bottom element is the oldest blocked caller
-	SequenceBase* callerSequence;
+	std::vector< BaseSequence* > callerStack;	//vector with all caller sequences. Top element is latest caller
+	std::vector< BaseSequence* > callerStackBlocking;	//TODO vector with all sequences, which are blocked with this sequence. Bottom element is the oldest blocked caller
+	BaseSequence* callerSequence;
 	
 // 	SequencerException& sequencerException;
 	
@@ -127,6 +130,12 @@ protected:
 	int sequenceID;
 	void checkMonitorsOfThisSequence();
 	void checkMonitorsOfAllCallers();
+	
+	auto startTime;
+	double timeout;				//0 = not set or infinite
+	Behavior::enumerator behaviorTimeout;
+	TimeoutCondition timeoutCondition;
+	Monitor timeoutMonitor;
 	
 	std::vector< *Monitor > monitors;
 	

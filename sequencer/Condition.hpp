@@ -12,7 +12,7 @@ public:
 	
 // 	bool operator()();		// checks condition	
 	bool isTrue();			//return true, if safed conditionState is true. Validates if validateStyle==polling
-	virtual void validate() = 0;	// has to be overwritten (pure virtual function)
+	virtual bool validate() = 0;	// has to be overwritten (pure virtual function)
 	
 	
 	

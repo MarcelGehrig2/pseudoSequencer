@@ -1,7 +1,7 @@
 #include "Step.hpp"
 
-Step::Step(Sequencer& S, SequenceBase* caller)
-: SequenceBase(S, caller)
+Step::Step(Sequencer& S, BaseSequence* caller)
+: BaseSequence(S, caller)
 {
 	setID(-99);		//all steps have the ID -99
 }

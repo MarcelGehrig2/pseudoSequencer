@@ -30,7 +30,7 @@ bool SequencePickUp::action()
 // create steps
 // ////////////////////////////////////////////////////////////////////////////
 	MoveTo moveTo;
-	moveTo.setTimeout(1.5);		//Timeout set for whole sequence	
+	moveTo.setTimeoutTime(1.5);		//Timeout set for whole sequence	
 	Gripper gripper;
 	//timeout is set before each step
 	
@@ -39,12 +39,12 @@ bool SequencePickUp::action()
 // Sequence
 // ////////////////////////////////////////////////////////////////////////////
 	moveTo(10, 15);	//TODO waypoints
-	gripper.setTimeout(1.0);
+	gripper.setTimeoutTime(1.0);
 	gripper(1, Gripper::open);
 	moveTo(12, 12);	//abovePackage
 	moveTo(10, 12);	//grippingPosition
 	
-	gripper.setTimeout(1.5);
+	gripper.setTimeoutTime(1.5);
 	gripper(1, close);
 	
 	if ( S.getCS().packageAvailable()==false ) {
