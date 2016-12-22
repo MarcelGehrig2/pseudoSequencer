@@ -179,9 +179,20 @@ std::vector< SequenceBase* > SequenceBase::getCallerStack() const
 	return callerStack;
 }
 
+std::vector< SequenceBase* > SequenceBase::getCallerStackBlocking() const
+{
+	return callerStackBlocking;
+}
+
+
 SequencerException& SequenceBase::getSequencerException() const
 {
 	return sequencerException;
+}
+
+void SequenceBase::setID(int ID)
+{
+	sequenceID = ID;
 }
 
 

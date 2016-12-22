@@ -1,10 +1,11 @@
 #include "Step.hpp"
 
-
-int Step::getID() const
+Step::Step(Sequencer& S, SequenceBase* caller)
+: SequenceBase(S, caller)
 {
-	return -99;
+	setID(-99);		//all steps have the ID -99
 }
+
 
 
 bool Step::isStep() const

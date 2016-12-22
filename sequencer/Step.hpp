@@ -3,9 +3,8 @@
 
 class Step : public SequenceBase {
 public:
-	
-	
-	int getID() const;	//steps allways have ID=-99
+	Step(Sequencer& S, SequenceBase* caller);
+
 	
 	bool isStep() const;
 	

@@ -27,6 +27,12 @@ int Sequence::operator()()
 	return SequenceBase::start();
 }
 
+bool Sequence::isStep()
+{
+	return false;
+}
+
+
 void Sequence::addMonitor(Monitor* monitor)
 {
 	monitors.push_back(monitor);

@@ -18,16 +18,13 @@ public:
 // 	virtual int operator()(std::string args) = 0;	//has to be implemented in derived class
 	int start();	//called bei operator() by derived class
 	
-	int runBlocking();
-	int runNonBlocking();
 	int run();				//uses standard value "isBlocking"
+	
 	void restartSequence();
+	void pauseSequence();
 	
 	virtual bool isStep() const;
 	
-	bool checkPreconditions();
-	bool checkPostconditions();
-	bool checkExceptionMonitors();
 // 	void addStopCondition(std::function<bool ()> f);
 	virtual bool stopCondition();
 	virtual bool checkExitCondition() = 0;
@@ -38,11 +35,15 @@ public:
 	
 // 	void addMonitor(Monitor monitor); //TODO Exception Monitor
 	
-
-	virtual int getID() const;		//steps allways have ID=-99
+	void setID(int ID);
+	int getID() const;		//steps allways have ID=-99
 	SequenceBase* getCallerSequence() const;
 	std::vector< SequenceBase* > getCallerStack() const;
-	SequencerException& getSequencerException() const;
+	std::vector< SequenceBase* > getCallerStackBlocking() const;
+// 	SequencerException& getSequencerException() const;
+	
+	
+	//TODO  moinitor exception timeout?....
 	
 	
 	std::string getState() const;
@@ -50,19 +51,18 @@ public:
 	runningStateEnum getRunningState() const;
 	void setRunningState(runningStateEnum runningState);
 // 	void setCallerRunningState(runningStateEnum runningState);
+
 	
-	void restartSequence();
-	void pauseSequence();
-	
-	//Timeout
+	//TODO Timeout
 	void setTimeout(double timeoutInSec);		//in seconds. For this sequence
 // 	bool checkTimeout();
 	bool checkTimeout(int sequenceID);
 	bool checkTimeout(SequenceBase* sequence);
 	bool checkTimeoutOfAllBlockedCallers();		//excluding "this" sequence, goes up to (but without) latest caller of a non blocking sequence
 	bool checkTimeoutOfThisSequence();
+	//TODO exception sequence and behavior
 	virtual timeoutAction();				//action when timout occours: standard throw error
-	void setTimeoutBehavior(Behavior::enumerator behavior);
+	void setTimeoutBehavior(Behavior::enumerator behavior);	//default is
 	void setTimeoutExceptionSequence(Sequence* sequence);
 	
 	// run mode
@@ -97,6 +97,8 @@ protected:
 
 	auto startTime;
 	double timeout = 0;				//0 = not set or infinite
+	Behavior::enumerator behaviorTimeout = Behavior::abortOwnerSequence;
+	
 	int pollingTime = 10;			//in milliseconds for checkPostconditions (including timeout and stuff)
 	int nrOfSequenceRepetitions = 1;	//number of repetitions of this sequence; 0==infinite; 1==run only once; 2==run once and repete once
 											//sequence restarts are not counted
@@ -114,7 +116,7 @@ protected:
 	std::vector< SequenceBase* > callerStackBlocking;	//TODO vector with all sequences, which are blocked with this sequence. Bottom element is the oldest blocked caller
 	SequenceBase* callerSequence;
 	
-	SequencerException& sequencerException;
+// 	SequencerException& sequencerException;
 	
 	std::vector< Condition* > preconditions;
 	std::vector< Condition* > postconditions;
@@ -122,7 +124,14 @@ protected:
 
 	
 	private:
+	int sequenceID;
 	void checkMonitorsOfThisSequence();
 	void checkMonitorsOfAllCallers();
+	
+	std::vector< *Monitor > monitors;
+	
+	bool checkPreconditions();
+	bool checkPostconditions();
+	bool checkExceptionMonitors();
 };
 		

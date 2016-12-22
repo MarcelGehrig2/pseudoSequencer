@@ -8,8 +8,13 @@ public:
 	~Sequence();
 	
 	std::string getName() const;
+	setName(std::string name);
 	
 	int operator() ();
+	int runBlocking();
+	int runNonBlocking();
+	
+	bool isStep();
 	
 	void addMonitor(Monitor* monitor);	//TODO implement
 	
@@ -23,9 +28,8 @@ private:
 	std::string name;
 	int sequenceID = 0;
 	
-	std::vector< *Monitor > monitors;
 	
-	static int sequenceCount = 0;	//TODO works like intended? every object created from an inherited class increments cont
+	static int sequenceCount = 0;	//TODO works like intended? counts all created sequences
 	
 	
 	
